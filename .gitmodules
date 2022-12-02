@@ -1,0 +1,3 @@
+[submodule "wiringGpioExtensions"]
+	path = wiringGpioExtensions
+	url = git@github.com:wiringGpio/wiringGpioExtensions-DotNet.git

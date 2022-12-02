@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Xml;
 using GpioManagerObjects;
-using static WiringPiWrapper.MCP;
-using WiringPiWrapper;
+using wiringGpioExtensions;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.IO;
@@ -105,8 +104,10 @@ namespace GpioJoyUi
                     if (typeNode == null)
                         continue;
 
-                    McpType type;
-                    type = (McpType)Enum.Parse(typeof(McpType), typeNode.InnerText);
+
+
+                    Mcp230xxType type;
+                    type = (Mcp230xxType)Enum.Parse(typeof(Mcp230xxType), typeNode.InnerText);
 
                     int address;
                     var addressNode = nextMcp.SelectSingleNode("Address");
@@ -190,7 +191,21 @@ namespace GpioJoyUi
             //  Parse This
             /*
              
-            <Pin>                <Name>SomeName</Name>                <Number>206</Number>                <Mode>Output</Mode>                <Joystick>ABtn</Joystick>              </Pin>                            or this            <Pin>                <Number>207</Number>                <Mode>PWMOutput</Mode>                <Joystick scale="0.5" reverse="true">LeftTrigger</Joystick>     //  PWM joystick vector can have optional scale and reversed attributes              </Pin>             
+            <Pin>
+                <Name>SomeName</Name>
+                <Number>206</Number>
+                <Mode>Output</Mode>
+                <Joystick>ABtn</Joystick>
+              </Pin>
+                
+            or this
+
+            <Pin>
+                <Number>207</Number>
+                <Mode>PWMOutput</Mode>
+                <Joystick scale="0.5" reverse="true">LeftTrigger</Joystick>     //  PWM joystick vector can have optional scale and reversed attributes
+              </Pin>
+             
             //  see ./Config/GpioConfig.xml for more examples and options
              */
 
@@ -227,7 +242,7 @@ namespace GpioJoyUi
                 XmlNode modeNode = nextPin.SelectSingleNode("Mode");
                 if (modeNode == null)
                     continue;
-                GPIO.GPIOpinmode pinMode;
+                PinMode pinMode;
                 try
                 {
                     Enum.TryParse(modeNode.InnerText, out pinMode);
@@ -262,7 +277,7 @@ namespace GpioJoyUi
                     //  if we are PWM we need range
                     //  <Range>
                     int pwmRange = 0;
-                    if (pinMode == GPIO.GPIOpinmode.PWMOutput)
+                    if (pinMode == PinMode.PWMOutput)
                     {
                         XmlNode rangeNode = nextPin.SelectSingleNode("Range");
                         if (rangeNode != null)

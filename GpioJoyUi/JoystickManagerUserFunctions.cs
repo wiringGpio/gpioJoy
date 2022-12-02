@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WiringPiWrapper;
+using wiringGpioExtensions;
 
 namespace GpioJoyUi
 {
@@ -477,7 +477,7 @@ namespace GpioJoyUi
                 foreach (var nextPin in XBoxModelPins)
                 {
                     nextPin.Write(0);
-                    if (nextPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+                    if (nextPin.Mode == PinMode.PWMOutput)
                         nextPin.PwmResume();
                 }
             }
@@ -493,12 +493,12 @@ namespace GpioJoyUi
         public void PinOnOff(GpioPinWrapper pin, int sleepMs)
         {
 
-            //if (pin.Mode == GPIO.GPIOpinmode.PWMOutput)
+            //if (pin.Mode == PinMode.PWMOutput)
             //    pin.PwmSetValue(1.0);
             //else
             pin.Write(1);
             Thread.Sleep(sleepMs);
-            //if (pin.Mode == GPIO.GPIOpinmode.PWMOutput)
+            //if (pin.Mode == PinMode.PWMOutput)
             //    pin.PwmSetValue(0.0);
             //else
             pin.Write(0);
@@ -507,7 +507,7 @@ namespace GpioJoyUi
         public void PinOn(GpioPinWrapper pin)
         {
             //var thisPin = PinManager.GetPin(pin);
-            //if (thisPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+            //if (thisPin.Mode == PinMode.PWMOutput)
             //    thisPin.PwmSetValue(1.0);
             //else
             pin.Write(1);
@@ -516,7 +516,7 @@ namespace GpioJoyUi
         public void PinOff(GpioPinWrapper pin)
         {
             //var thisPin = PinManager.GetPin(pin);
-            //if (thisPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+            //if (thisPin.Mode == PinMode.PWMOutput)
             //    thisPin.PwmSetValue(0.0);
             //else
             pin.Write(0);
@@ -564,7 +564,7 @@ namespace GpioJoyUi
             //  init the xbox pins
             foreach (var nextPin in XBoxModelPins)
             {
-                if (nextPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+                if (nextPin.Mode == PinMode.PWMOutput)
                     nextPin.PwmPause();
             }
 

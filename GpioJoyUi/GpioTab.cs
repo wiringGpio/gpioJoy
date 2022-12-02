@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using WiringPiWrapper;
+using wiringGpioExtensions;
 using GpioManagerObjects;
 
 namespace GpioJoyUi
@@ -116,12 +116,12 @@ namespace GpioJoyUi
 
                 switch (pin.Mode)
                 {
-                    case GPIO.GPIOpinmode.Input:
-                    case GPIO.GPIOpinmode.Output:
+                    case PinMode.Input:
+                    case PinMode.Output:
                         SetCheckBoxCheck(cb, pin.Read() == 1);
                         break;
 
-                    case GPIO.GPIOpinmode.PWMOutput:
+                    case PinMode.PWMOutput:
                         SetCheckBoxCheck(cb, pin.PwmRunning);
                         break;
                 }     
@@ -160,18 +160,18 @@ namespace GpioJoyUi
                 {
                     switch (selectedPin.Mode)
                     {
-                        case GPIO.GPIOpinmode.Input:
+                        case PinMode.Input:
                             //  Can not set state of input pin
                             MessageBox.Show("You can not change the value of input pins");
                             SetCheckBoxCheck(checkedBox, false);
                             break;
 
-                        case GPIO.GPIOpinmode.Output:
+                        case PinMode.Output:
                             //  on or off for output pin
                             selectedPin.Write(selectedPin.Read() == 1 ? 0 : 1);
                             break;
 
-                        case GPIO.GPIOpinmode.PWMOutput:
+                        case PinMode.PWMOutput:
                             //  pause or resume PWM
                             if ( ! selectedPin.PwmStarted )
                             {
@@ -226,7 +226,7 @@ namespace GpioJoyUi
                     else
                         checkBoxEnableJs.Hide();
 
-                    ShowPinOutputControls( (selectedPin.Mode == GPIO.GPIOpinmode.PWMOutput || selectedPin.Mode == GPIO.GPIOpinmode.Output), selectedPin);
+                    ShowPinOutputControls( (selectedPin.Mode == PinMode.PWMOutput || selectedPin.Mode == PinMode.Output), selectedPin);
                 }
 
             }
@@ -258,7 +258,7 @@ namespace GpioJoyUi
                     if (selectedPin != null)
                     {
                         //  are we already in this mode
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.Input)
+                        if (selectedPin.Mode == PinMode.Input)
                             return;
 
                         if (selectedPin.HasJoystickAssignment)
@@ -270,14 +270,14 @@ namespace GpioJoyUi
                         }
 
                         //  shut down pwm if we are pwm pin
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+                        if (selectedPin.Mode == PinMode.PWMOutput)
                             selectedPin.PwmStop();
                         //  turn off if we are output pin 
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.Output)
+                        if (selectedPin.Mode == PinMode.Output)
                             selectedPin.Write(0);
 
                         //  set new mode
-                        selectedPin.Mode = GPIO.GPIOpinmode.Input;
+                        selectedPin.Mode = PinMode.Input;
 
                         //  update UI
                         ShowPinOutputControls(false, null);
@@ -318,7 +318,7 @@ namespace GpioJoyUi
                     if ( selectedPin != null )
                     {
                         //  are we already in this mode
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.Output)
+                        if (selectedPin.Mode == PinMode.Output)
                             return;
                        
                         //  can't change mode of joystick assigned pins
@@ -331,11 +331,11 @@ namespace GpioJoyUi
                         }
 
                         //  shut down pwm if we are pwm pin
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+                        if (selectedPin.Mode == PinMode.PWMOutput)
                             selectedPin.PwmStop();
 
                         //  set new mode
-                        selectedPin.Mode = GPIO.GPIOpinmode.Output;
+                        selectedPin.Mode = PinMode.Output;
 
                         ShowPinOutputControls(true, selectedPin);
 
@@ -374,7 +374,7 @@ namespace GpioJoyUi
                     if (selectedPin != null)
                     {
                         //  are we already in this mode
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.PWMOutput)
+                        if (selectedPin.Mode == PinMode.PWMOutput)
                             return;
                         
                         if (selectedPin.HasJoystickAssignment)
@@ -386,10 +386,10 @@ namespace GpioJoyUi
                         }
 
                         //  turn off if we are output pin 
-                        if (selectedPin.Mode == GPIO.GPIOpinmode.Output)
+                        if (selectedPin.Mode == PinMode.Output)
                             selectedPin.Write(0);
 
-                        selectedPin.Mode = GPIO.GPIOpinmode.PWMOutput;
+                        selectedPin.Mode = PinMode.PWMOutput;
                         //selectedPin.Write(1);
 
                         PinManager.StartPwm(selectedPin.PinNumber);
@@ -534,7 +534,7 @@ namespace GpioJoyUi
             {
                 switch ( pin.Mode )
                 {
-                    case GPIO.GPIOpinmode.PWMOutput:
+                    case PinMode.PWMOutput:
                         {
                             textBoxPwmRange.Show();
                             labelPwmValue.Show();
@@ -569,7 +569,7 @@ namespace GpioJoyUi
                         }
                         break;
 
-                    case GPIO.GPIOpinmode.Output:
+                    case PinMode.Output:
                         {
                             buttonCenterFreq.Hide();
                             labelPwmRange.Hide();
@@ -625,18 +625,18 @@ namespace GpioJoyUi
         {
             switch (selectedPin.Mode)
             {
-                case GPIO.GPIOpinmode.Input:
+                case PinMode.Input:
                     radioButtonIn.Checked = true;
                     radioButtonOut.Checked = false;
                     radioButtonPwm.Checked = false;
                     break;
-                case GPIO.GPIOpinmode.Output:
+                case PinMode.Output:
                     radioButtonIn.Checked = false;
                     radioButtonOut.Checked = true;
                     radioButtonPwm.Checked = false;
                     break;
 
-                case GPIO.GPIOpinmode.PWMOutput:
+                case PinMode.PWMOutput:
                     radioButtonIn.Checked = false;
                     radioButtonOut.Checked = false;
                     radioButtonPwm.Checked = true;

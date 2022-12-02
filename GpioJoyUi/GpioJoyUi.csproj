@@ -22,6 +22,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Windows|AnyCPU' ">
     <OutputPath>bin\Release_Windows\</OutputPath>
@@ -41,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Windows|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +55,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -130,7 +134,11 @@
       <Project>{2F0BE4B3-896A-44B8-824E-8B4C09EAB17A}</Project>
       <Name>SimpleJoy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WiringPiExtension\DotNet\GpioManagerObjects\GpioManagerObjects.csproj">
+    <ProjectReference Include="..\wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj">
+      <Project>{ce36e943-f4f4-46c6-b6dc-c63968cab19e}</Project>
+      <Name>wiringGpioExtensions-NFW4</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GpioManagerObjects\GpioManagerObjects.csproj">
       <Project>{3f9223f4-ae39-4a30-a6c5-a5997abc554a}</Project>
       <Name>GpioManagerObjects</Name>
     </ProjectReference>
