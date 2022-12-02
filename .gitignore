@@ -1,0 +1,10 @@
+bin
+obj
+/WiringPi/WiringPi/bin
+/WiringPi/WiringPi/obj
+.DS_Store
+._.DS_Store
+.vs
+*.userprefs
+packages
+._.gitignore

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GpioConfig>
+
+  <ControlPins>
+
+    <Pin>
+      <Number>12</Number>
+    </Pin>
+    <Pin>
+      <Number>16</Number>
+    </Pin>
+    <Pin>
+      <Number>18</Number>
+    </Pin>
+    
+  </ControlPins>
+  
+</GpioConfig>

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Building project"
+xbuild /p:Configuration=Release LBP_GpioJoy.sln /t:Rebuild
+echo "Installing files"
+rm -f /home/pi/GpioJoy/*.dll
+rm -f /home/pi/GpioJoy/*.exe
+rm -f /home/pi/GpioJoy/*.xml
+cp GpioJoyUi/bin/Release/*.dll /home/pi/GpioJoy
+cp GpioJoyUi/bin/Release/GpioJoy.exe /home/pi/GpioJoy
+cp GpioJoyUi/bin/Release/Config/*.xml /home/pi/GpioJoy/Config
+
