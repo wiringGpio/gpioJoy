@@ -76,10 +76,6 @@
       <Project>{ce36e943-f4f4-46c6-b6dc-c63968cab19e}</Project>
       <Name>wiringGpioExtensions-NFW4</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WiringPiWrapper\WiringPiWrapper.csproj">
-      <Project>{44164c3f-b228-4488-b027-ea9717e7e6e1}</Project>
-      <Name>WiringPiWrapper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
