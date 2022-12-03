@@ -205,7 +205,8 @@ namespace GpioJoyUi
 
                 ServoTwo.SetPulse(ServoTwoValue);
 
-                RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
+                if ( RemoteDisplayDriver != null)
+                    RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
                 
                 YBtnChangeTick = tickNow;
             }
@@ -223,7 +224,8 @@ namespace GpioJoyUi
 
                 ServoTwo.SetPulse(ServoTwoValue);
 
-                RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
+                if (RemoteDisplayDriver != null)
+                    RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
 
                 ABtnChangeTick = tickNow;
             }
@@ -237,7 +239,8 @@ namespace GpioJoyUi
                 ServoTwo.Center();
                 ServoTwoValue = 1.5;
 
-                RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
+                if (RemoteDisplayDriver != null)
+                    RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
 
                 BBtnChangeTick = tickNow;
             }
@@ -273,13 +276,20 @@ namespace GpioJoyUi
             if (MotorValueTwo < 0.0)
             {
                 if (MotorValueTwo <= -1.0)
-                    RemoteDisplayDriver.Set(string.Format("{0:.0}", MotorValueTwo));
+                {
+                    if (RemoteDisplayDriver != null)
+                        RemoteDisplayDriver.Set(string.Format("{0:.0}", MotorValueTwo));
+                }
                 else
-                    RemoteDisplayDriver.Set(string.Format("{0:.00}", MotorValueTwo));
+                {
+                    if (RemoteDisplayDriver != null)
+                        RemoteDisplayDriver.Set(string.Format("{0:.00}", MotorValueTwo));
+                }
             }
             else
             {
-                RemoteDisplayDriver.Set(string.Format("{0:0.00}", MotorValueTwo));
+                if (RemoteDisplayDriver != null)
+                    RemoteDisplayDriver.Set(string.Format("{0:0.00}", MotorValueTwo));
             }
         }
 
@@ -288,13 +298,20 @@ namespace GpioJoyUi
             if (MotorValueNxt < 0.0)
             {
                 if (MotorValueNxt <= -1.0)
-                    RemoteDisplayDriver.Set(string.Format("{0:.0}", MotorValueNxt));
+                {
+                    if (RemoteDisplayDriver != null)
+                        RemoteDisplayDriver.Set(string.Format("{0:.0}", MotorValueNxt));
+                }
                 else
-                    RemoteDisplayDriver.Set(string.Format("{0:.00}", MotorValueNxt));
+                {
+                    if (RemoteDisplayDriver != null)
+                        RemoteDisplayDriver.Set(string.Format("{0:.00}", MotorValueNxt));
+                }
             }
             else
             {
-                RemoteDisplayDriver.Set(string.Format("{0:0.00}", MotorValueNxt));
+                if (RemoteDisplayDriver != null)
+                    RemoteDisplayDriver.Set(string.Format("{0:0.00}", MotorValueNxt));
             }
         }
 
