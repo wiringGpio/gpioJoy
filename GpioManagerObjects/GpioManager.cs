@@ -4,8 +4,8 @@ using System.Linq;
 using System.Xml;
 using System.Text.RegularExpressions;
 using wiringGpioExtensions;
-
-
+using static PlatformHelper.PlatformHelper;
+using PlatformHelper;
 
 namespace GpioManagerObjects
 {
@@ -75,10 +75,12 @@ namespace GpioManagerObjects
         /// <returns></returns>
         public int SetupMcp(Mcp230xxType type, int baseNumber, int address)
         {
-#if !RPI
-            return 1;
+            if (RunningPlatform() == Platform.Windows)
+            {
+                return 1;
 
-#else
+            }
+
             switch (type)
             {
                 case Mcp230xxType.Mcp23008:
@@ -100,7 +102,7 @@ namespace GpioManagerObjects
                 default:
                     return 0;
             }
-#endif
+
         }
 
 
@@ -113,9 +115,11 @@ namespace GpioManagerObjects
         /// <returns></returns>
         public int SetupPca(int baseNumber, int address, float frequency)
         {
-#if !RPI
-            return 1;
-#else
+            if (RunningPlatform() == Platform.Windows)
+            {
+                return 1;
+            }
+
             int fd = DeviceI2CExtensions.Pca9685Setup(1, baseNumber, address, frequency);
             for (int i = baseNumber; i < baseNumber + 16; i++)
             {
@@ -123,7 +127,6 @@ namespace GpioManagerObjects
             }
             DeviceI2CExtensions.Pca9685PWMReset(fd);
             return fd;
-#endif
         }
 
 
@@ -201,12 +204,16 @@ namespace GpioManagerObjects
         public StepperWrapper CreateStepperDriver(XmlNode sequenceElement, XmlNode stepperElement)
         {
             int index = 0;
-#if !RPI
-            FakeIndex++;
-            index = FakeIndex;
-#else
-            index =  StepperMotor.CreateFromXml(sequenceElement.OuterXml, stepperElement.OuterXml);
-#endif
+            if (RunningPlatform() == Platform.Windows)
+            { 
+                FakeIndex++;
+                index = FakeIndex;
+            }
+            else
+            { 
+                index = StepperMotor.CreateFromXml(sequenceElement.OuterXml, stepperElement.OuterXml);
+            }
+           
             //  the library created a stepper driver
             //  we need to parse the stepper element so we can create pin wrappers 
             //  required to hook to the joystick and user interace for all the pins used
@@ -321,15 +328,18 @@ namespace GpioManagerObjects
         /// <param name="delay">delay in milliseconds</param>
         public void StepperSetDelay(int index, float delay)
         {
-#if !RPI
-            Console.WriteLine("Stepper SetDelay");
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.SetDelay(delay);
+                Console.WriteLine("Stepper SetDelay");
             }
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.SetDelay(delay);
+                }
+            }
         }
 
 
@@ -340,15 +350,18 @@ namespace GpioManagerObjects
         /// <param name="steps">number of steps to move</param>
         public void StepperStep(int index, int steps)
         {
-#if !RPI
-            Console.WriteLine("Stepper StepperStep");
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.Step(steps);
+                Console.WriteLine("Stepper StepperStep");
             }
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.Step(steps);
+                }
+            }
         }
 
         /// <summary>
@@ -358,15 +371,18 @@ namespace GpioManagerObjects
         /// <param name="value">unit vector (-1.0 to 1.0) for stepper speed, delay between steps will be calculated from stepper delay min and max</param>
         public void StepperSetSpeed(int index, float value)
         {
-#if !RPI
-            Console.WriteLine("Stepper set speed " + value.ToString());
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.SetSpeed(value);
+                Console.WriteLine("Stepper set speed " + value.ToString());
             }
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.SetSpeed(value);
+                }
+            }
         }
 
 
@@ -376,15 +392,18 @@ namespace GpioManagerObjects
         /// <param name="index">index of the stepper motor</param>
         public void StepperStop(int index)
         {
-#if !RPI
-            Console.WriteLine("Stepper Stop");
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.Stop();
+                Console.WriteLine("Stepper Stop");
             }
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.Stop();
+                }
+            }
         }
 
         /// <summary>
@@ -393,17 +412,20 @@ namespace GpioManagerObjects
         /// <param name="index">index of the stepper motor</param>
         public int StepperGetTachoCount(int index)
         {
-#if !RPI
-            Console.WriteLine("Stepper StepperGetTachoCount");
-            return 0;
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                return driver.TachoCount;
+                Console.WriteLine("Stepper StepperGetTachoCount");
+                return 0;
             }
-            return 0;
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    return driver.TachoCount;
+                }
+                return 0;
+            }
         }
 
         /// <summary>
@@ -412,15 +434,18 @@ namespace GpioManagerObjects
         /// <param name="index">index of the stepper motor</param>
         public void StepperResetTachoCount(int index)
         {
-#if !RPI
-            Console.WriteLine("Stepper Stop");
-#else
-            StepperWrapper driver = null;
-            if (StepperDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.ResetTachoCount();
+                Console.WriteLine("Stepper Stop");
             }
-#endif
+            else
+            {
+                StepperWrapper driver = null;
+                if (StepperDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.ResetTachoCount();
+                }
+            }
         }
 
         /// <summary>
@@ -430,20 +455,23 @@ namespace GpioManagerObjects
         /// <param name="delay">delay in milliseconds</param>
         public void StepperSetDelay(string name, float delay)
         {
-#if !RPI
-            Console.WriteLine("Stepper SetDelay");
-#else
-            try
+            if (RunningPlatform() == Platform.Windows)
             {
-                int index = StepperDriversByName[name];
-                var driver = StepperDriversByIndex[index];
-                driver.SetDelay(delay);
+                Console.WriteLine("Stepper SetDelay");
             }
-            catch
+            else
             {
-                return;
+                try
+                {
+                    int index = StepperDriversByName[name];
+                    var driver = StepperDriversByIndex[index];
+                    driver.SetDelay(delay);
+                }
+                catch
+                {
+                    return;
+                }
             }
-#endif
         }
 
         /// <summary>
@@ -453,20 +481,23 @@ namespace GpioManagerObjects
         /// <param name="steps">number of steps to turn</param>
         public void StepperStep(string name, int steps)
         {
-#if !RPI
-            Console.WriteLine("Stepper step " + steps.ToString());
-#else
-            try
+            if (RunningPlatform() == Platform.Windows)
             {
-                int index = StepperDriversByName[name];
-                var driver = StepperDriversByIndex[index];
-                driver.Step(steps);
+                Console.WriteLine("Stepper step " + steps.ToString());
             }
-            catch
+            else
             {
-                return;
+                try
+                {
+                    int index = StepperDriversByName[name];
+                    var driver = StepperDriversByIndex[index];
+                    driver.Step(steps);
+                }
+                catch
+                {
+                    return;
+                }
             }
-#endif
         }
 
 
@@ -477,20 +508,23 @@ namespace GpioManagerObjects
         /// <param name="value">unit vector between -1.0 and 1.0 to turn between min delay and max delay</param>
         public void StepperSetSpeed(string name, float value)
         {
-#if !RPI
-            Console.WriteLine("Stepper set speed " + value.ToString());
-#else
-            try
+            if (RunningPlatform() == Platform.Windows)
             {
-                int index = StepperDriversByName[name];
-                var driver = StepperDriversByIndex[index];
-                driver.SetSpeed(value);
+                Console.WriteLine("Stepper set speed " + value.ToString());
             }
-            catch
+            else
             {
-                return;
+                try
+                {
+                    int index = StepperDriversByName[name];
+                    var driver = StepperDriversByIndex[index];
+                    driver.SetSpeed(value);
+                }
+                catch
+                {
+                    return;
+                }
             }
-#endif
         }
 
 
@@ -501,21 +535,24 @@ namespace GpioManagerObjects
         /// <param name="name">the name of the stepper motor</param>
         public void StepperStop(string name)
         {
-#if !RPI
-            Console.WriteLine("Stepper Stop");
-#else
-            
-            try
+            if (RunningPlatform() == Platform.Windows)
             {
-                int index = StepperDriversByName[name];
-                var driver = StepperDriversByIndex[index];
-                driver.Stop();
+                Console.WriteLine("Stepper Stop");
             }
-            catch
+            else
             {
-                return;
+
+                try
+                {
+                    int index = StepperDriversByName[name];
+                    var driver = StepperDriversByIndex[index];
+                    driver.Stop();
+                }
+                catch
+                {
+                    return;
+                }
             }
-#endif
         }
 
         /// <summary>
@@ -524,10 +561,11 @@ namespace GpioManagerObjects
         /// <param name="name">the name of the stepper motor</param>
         public int StepperGetTachoCount(string name)
         {
-#if !RPI
-            Console.WriteLine("Stepper Stop");
-            return 0;
-#else
+            if (RunningPlatform() == Platform.Windows)
+            {
+                Console.WriteLine("Stepper Stop");
+                return 0;
+            }
 
             try
             {
@@ -539,7 +577,6 @@ namespace GpioManagerObjects
             {
                 return 0;
             }
-#endif
         }
 
         /// <summary>
@@ -548,10 +585,11 @@ namespace GpioManagerObjects
         /// <param name="name">the name of the stepper motor</param>
         public void StepperResetTachoCount(string name)
         {
-#if !RPI
-            Console.WriteLine("Stepper Reset tacho count");
-            return;
-#else
+            if (RunningPlatform() == Platform.Windows)
+            {
+                Console.WriteLine("Stepper Reset tacho count");
+                return;
+            }
             try
             {
                 int index = StepperDriversByName[name];
@@ -562,7 +600,6 @@ namespace GpioManagerObjects
             {
                 return;
             }
-#endif
         }
 
 
@@ -681,12 +718,15 @@ namespace GpioManagerObjects
         {
             int index = 0;
 
-#if !RPI
-            FakeIndex++;
-            index = FakeIndex;
-#else
-            index = SevenSegDisplay.CreateFromXml(sevenSegDisplayElement.OuterXml);
-#endif
+            if (RunningPlatform() == Platform.Windows)
+            {
+                FakeIndex++;
+                index = FakeIndex;
+            }
+            else
+            {
+                index = SevenSegDisplay.CreateFromXml(sevenSegDisplayElement.OuterXml);
+            }
 
             //  the library created a stepper driver
             //  we need to parse the stepper element so we can create pin wrappers 
@@ -797,31 +837,36 @@ namespace GpioManagerObjects
 
         public void SevenSegmentDisplaySetDisplay(int index, string display)
         {
-#if !RPI
-            Console.WriteLine("Seven SEg Display " + display);
-#else
-            SevenSegDisplayWrapper driver = null;
-            if (SevenSegDisplayDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.Set(display);
+                Console.WriteLine("Seven SEg Display " + display);
             }
-#endif   
+            else
+            {
+                SevenSegDisplayWrapper driver = null;
+                if (SevenSegDisplayDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.Set(display);
+                }
+            }
         }
 
 
 
         public void SevenSegmentDisplayOff(int index)
         {
-#if !RPI
-            Console.WriteLine("Seven SEg Display " + index.ToString());
-#else
-            SevenSegDisplayWrapper driver = null;
-            if (SevenSegDisplayDriversByIndex.TryGetValue(index, out driver))
+            if (RunningPlatform() == Platform.Windows)
             {
-                driver.Off();
+                Console.WriteLine("Seven SEg Display " + index.ToString());
             }
-            
-#endif   
+            else
+            {
+                SevenSegDisplayWrapper driver = null;
+                if (SevenSegDisplayDriversByIndex.TryGetValue(index, out driver))
+                {
+                    driver.Off();
+                }
+            }
         }
 
 
@@ -1027,16 +1072,17 @@ namespace GpioManagerObjects
         public void Setup()
         {
 
-#if RPI
-            //  setup wiring pi and extension
-            if (wiringGpioExtensions.Setup.WiringGpioSetupPhys() < 0)
-            {   
-                return;
-            }
+            if (PlatformHelper.PlatformHelper.RunningPlatform() == PlatformHelper.Platform.Linux)
+            {
+                //  setup wiring pi and extension
+                if (wiringGpioExtensions.Setup.WiringGpioSetupPhys() < 0)
+                {
+                    return;
+                }
 
-            //  Set PWM clock to mark space mode
-            //GPIO.PwmSetMode(0);
-#endif
+                //  Set PWM clock to mark space mode
+                GPIO.PwmSetMode(0);
+            }
         }
 
         //  Keep track of our extension objects

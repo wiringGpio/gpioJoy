@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using wiringGpioExtensions;
+﻿using wiringGpioExtensions;
+using PlatformHelper;
+using static PlatformHelper.PlatformHelper;
 
 namespace GpioManagerObjects
 {
@@ -32,12 +32,13 @@ namespace GpioManagerObjects
 
             PwmValue = 0;
             HardwarePwm = hwPwm;
-           
-#if !RPI
-            //  using the dummy object
-            Mode = PinMode.Input;
-            State = GPIO.GPIOpinvalue.Low;
-#endif
+
+            if (RunningPlatform() == Platform.Windows)
+            {   
+                //  using the dummy object
+                Mode = PinMode.Input;
+                State = PinValue.Low;
+            }
         }
 
 
@@ -60,12 +61,6 @@ namespace GpioManagerObjects
         public int PwmValue { get; protected set; }
         public double PwmScale { get; protected set; }
 
-        //  Methods to access the Pins
-        //
-#if RPI
-
-        //  Raspberry Pi Build - call the GPIO library functions to control the pins
-
 
         /// <summary>
         /// Write to pin - digitalWrite
@@ -73,11 +68,18 @@ namespace GpioManagerObjects
         /// <param name="value">1 or 0</param>
         public void Write(int value)
         {
-            GPIO.DigitalWrite(PinNumber, (PinValue)value);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                GPIO.DigitalWrite(PinNumber, (PinValue)value);
 
-            //  Raspberry Pi hardware PWM
-            if (PinNumber == 12 && Mode == PinMode.PWMOutput)
-                GPIO.PwmWrite(PinNumber, 0);
+                //  Raspberry Pi hardware PWM
+                if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                    GPIO.PwmWrite(PinNumber, 0);
+            }
+            else
+            {
+                FakeWrite(value);
+            }
         }
 
         
@@ -87,7 +89,14 @@ namespace GpioManagerObjects
         /// <returns>1 or 0 value read</returns>
         public virtual int Read()
         {
-            return GPIO.DigitalRead(PinNumber);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                return GPIO.DigitalRead(PinNumber);
+            }
+            else
+            {
+                return FakeRead();
+            }
         }
 
 
@@ -98,7 +107,14 @@ namespace GpioManagerObjects
         /// <returns></returns>
         public int DigitalRead()
         {
-            return GPIO.DigitalRead(PinNumber);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                return GPIO.DigitalRead(PinNumber);
+            }
+            else
+            {
+                return FakeRead();
+            }
         }
 
 
@@ -118,12 +134,15 @@ namespace GpioManagerObjects
                 if (_Mode == value)
                     return;
 
-                if (_Mode == PinMode.PWMOutput && PwmRunning)
+                if (RunningPlatform() == Platform.Linux)
                 {
-                    PwmStop();
-                }
+                    if (_Mode == PinMode.PWMOutput && PwmRunning)
+                    {
+                        PwmStop();
+                    }
 
-                GPIO.PinMode(PinNumber, (PinMode)value);
+                    GPIO.PinMode(PinNumber, (PinMode)value);
+                }
 
                 _Mode = value;
             }
@@ -139,48 +158,55 @@ namespace GpioManagerObjects
         /// <returns>return 0 for hardware PWM, or value from softPwmCreate</returns>
         public int PwmStart(int value, int range)
         {
-            int ret = 0;
-            //  set pwm depending on pin type
-            if (HardwarePwm)
+            if (RunningPlatform() == Platform.Linux)
             {
-                //  set pin to off
-                GPIO.DigitalWrite(PinNumber, 0);
-
-                if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                int ret = 0;
+                //  set pwm depending on pin type
+                if (HardwarePwm)
                 {
-                    //  set the clock to give 50 Hz for their range - TODO this is hard coded for 50 Hz (if this calculation is correct).  Need to understand more about PWM
-                    //  http://raspberrypi.stackexchange.com/questions/4906/control-hardware-pwm-frequency
-                    int clock = (int)(Constants.RPiPwmClockSpeed / (range * Constants.RPiPwmFrequency));
-                    
-                    //  Set PWM clock to mark space mode
-                    GPIO.PwmSetMode(0);
-                    GPIO.PwmSetClock(clock);
-                    GPIO.PwmSetRange(range);
+                    //  set pin to off
+                    GPIO.DigitalWrite(PinNumber, 0);
 
-                    //  Start at off
-                    GPIO.PwmWrite(PinNumber, 0);
+                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                    {
+                        //  set the clock to give 50 Hz for their range - TODO this is hard coded for 50 Hz (if this calculation is correct).  Need to understand more about PWM
+                        //  http://raspberrypi.stackexchange.com/questions/4906/control-hardware-pwm-frequency
+                        int clock = (int)(Constants.RPiPwmClockSpeed / (range * Constants.RPiPwmFrequency));
+
+                        //  Set PWM clock to mark space mode
+                        GPIO.PwmSetMode(0);
+                        GPIO.PwmSetClock(clock);
+                        GPIO.PwmSetRange(range);
+
+                        //  Start at off
+                        GPIO.PwmWrite(PinNumber, 0);
+                    }
                 }
+                else
+                {
+                    //  this is all soft pwm
+                    if (PwmStarted)
+                    {
+                        PwmStop();
+                    }
+
+                    ret = SoftwarePwm.SoftPwmCreate(PinNumber, value, range);
+                    if (ret == 0)
+                    {
+                        _Mode = PinMode.PWMOutput;
+                    }
+                }
+
+                PwmRange = range;
+                PwmValue = value;
+                PwmRunning = true;
+                PwmStarted = true;
+                return ret;
             }
             else
             {
-                //  this is all soft pwm
-                if (PwmStarted)
-                {
-                    PwmStop();
-                }
-
-                ret = SoftwarePwm.SoftPwmCreate(PinNumber, value, range);
-                if (ret == 0)
-                {
-                    _Mode = PinMode.PWMOutput;
-                }
+                return FakePwmStart(value, range);
             }
-
-            PwmRange = range;
-            PwmValue = value;
-            PwmRunning = true;
-            PwmStarted = true;
-            return ret;
         }
 
 
@@ -189,26 +215,33 @@ namespace GpioManagerObjects
         /// </summary>
         public void PwmStop()
         {
-            if (_Mode != PinMode.PWMOutput)
-                return;
-
-            //  stop pwm depending on pin type
-            if (HardwarePwm)
+            if (RunningPlatform() == Platform.Linux)
             {
-                GPIO.DigitalWrite(PinNumber, 0);
-                if (PinNumber == 12 && Mode == PinMode.PWMOutput)
-                    GPIO.PwmWrite(PinNumber, 0);
+                if (_Mode != PinMode.PWMOutput)
+                    return;
+
+                //  stop pwm depending on pin type
+                if (HardwarePwm)
+                {
+                    GPIO.DigitalWrite(PinNumber, 0);
+                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                        GPIO.PwmWrite(PinNumber, 0);
+                }
+                else
+                {
+                    SoftwarePwm.SoftPwmStop(PinNumber);
+                    GPIO.PinMode(PinNumber, (int)PinMode.Input);
+                    _Mode = PinMode.Input;
+                }
+
+                PwmRunning = false;
+                PwmStarted = false;
+                PwmValue = 0;
             }
             else
             {
-                SoftwarePwm.SoftPwmStop(PinNumber);
-                GPIO.PinMode(PinNumber, (int)PinMode.Input);
-                _Mode = PinMode.Input;
+                FakePwmStop();
             }
-
-            PwmRunning = false;
-            PwmStarted = false;
-            PwmValue = 0;
         }
 
 
@@ -218,18 +251,25 @@ namespace GpioManagerObjects
         /// </summary>
         public void PwmPause()
         {
-            if (HardwarePwm)
+            if (RunningPlatform() == Platform.Linux)
             {
-                GPIO.DigitalWrite(PinNumber, 0);
-                if (PinNumber == 12 && Mode == PinMode.PWMOutput)
-                    GPIO.PwmWrite(PinNumber, 0);
+                if (HardwarePwm)
+                {
+                    GPIO.DigitalWrite(PinNumber, 0);
+                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                        GPIO.PwmWrite(PinNumber, 0);
+                }
+                else
+                {
+                    SoftwarePwm.SoftPwmStop(PinNumber);
+                }
+
+                PwmRunning = false;
             }
             else
             {
-                SoftwarePwm.SoftPwmStop(PinNumber);
+                FakePwmPause();
             }
-
-            PwmRunning = false;
         }
 
 
@@ -250,12 +290,19 @@ namespace GpioManagerObjects
         /// <param name="value">unit vector between 0 and 1.0, used to multiply the range</param>
         public void PwmSetValue(double value)
         {
-            if (_Mode != PinMode.PWMOutput)
-                return;
+            if (RunningPlatform() == Platform.Linux)
+            {
+                if (_Mode != PinMode.PWMOutput)
+                    return;
 
-            int pwmValue = (int)(value * PwmRange);
+                int pwmValue = (int)(value * PwmRange);
 
-            PwmSetValue(pwmValue);
+                PwmSetValue(pwmValue);
+            }
+            else
+            {
+                FakePwmSetValue(value);
+            }
         }
 
 
@@ -265,41 +312,50 @@ namespace GpioManagerObjects
         /// <param name="value"> integer value between 0 and Range</param>
         public void PwmSetValue(int value)
         {
-            //  set pwm value depending on pin type
-            if (HardwarePwm)
+            if (RunningPlatform() == Platform.Linux)
             {
-                GPIO.PwmWrite(PinNumber, value);
+                //  set pwm value depending on pin type
+                if (HardwarePwm)
+                {
+                    GPIO.PwmWrite(PinNumber, value);
+                }
+                else
+                {
+                    SoftwarePwm.SoftPwmWrite(PinNumber, value);
+                }
+
+                PwmValue = value;
             }
             else
             {
-                SoftwarePwm.SoftPwmWrite(PinNumber, value);
+                FakePwmSetValue(value);
             }
-
-            PwmValue = value;
         }
+
+
+
 
         // Fake Pins for Windows BUild
         //
-#else
 
         //  Windows build, use dummy functions
-        public void Write(int value)
+        public void FakeWrite(int value)
         {
             if (value == 1)
-                State = GPIO.GPIOpinvalue.High;
+                State = PinValue.High;
             else
-                State = GPIO.GPIOpinvalue.Low;
+                State = PinValue.Low;
         }
 
         //  Read
-        public virtual int Read()
+        public virtual int FakeRead()
         {
-            return State == GPIO.GPIOpinvalue.High ? 1 : 0;
+            return State == PinValue.High ? 1 : 0;
         }
 
-        public GPIO.GPIOpinvalue State;
+        public PinValue State;
         
-         public PinMode Mode
+         public PinMode FakeMode
         {
             get
             {
@@ -313,7 +369,7 @@ namespace GpioManagerObjects
         }
 
         //  Start PWM
-        public int PwmStart(int value, int range)
+        public int FakePwmStart(int value, int range)
         {
             _Mode = PinMode.PWMOutput;
             PwmStarted = true;
@@ -324,7 +380,7 @@ namespace GpioManagerObjects
         }
 
         //  Stop PWM
-        public void PwmStop()
+        public void FakePwmStop()
         {
             PwmValue = 0;
            
@@ -333,33 +389,32 @@ namespace GpioManagerObjects
             _Mode = PinMode.Input;
         }
 
-        public void PwmPause()
+        public void FakePwmPause()
         {
             
             PwmRunning = false;
         }
 
-        public int PwmResume()
+        public int FakePwmResume()
         {
             return PwmStart(PwmValue, PwmRange);
         }
 
         //  Set PWM value
-        public void PwmSetValue(double value)
+        public void FakePwmSetValue(double value)
         {
             if (_Mode != PinMode.PWMOutput)
                 return;
             PwmValue = (int)value;
         }
 
-      public void PwmSetValue(int value)
+      public void FakePwmSetValue(int value)
         {
             if (_Mode != PinMode.PWMOutput)
                 return;
             PwmValue = (int)value;
         }
 
-#endif
 
     }
 

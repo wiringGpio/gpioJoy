@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlatformHelper;
+using static PlatformHelper.PlatformHelper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +16,19 @@ namespace GpioManagerObjects
         }
 
         public void Set(string display)
-        {   
-            SevenSegDisplay.Set(DisplayIndex, display);
+        {
+            if (RunningPlatform() == Platform.Linux)
+            {
+                SevenSegDisplay.Set(DisplayIndex, display);
+            }
         }
 
         public void Off()
         {
-            SevenSegDisplay.Off(DisplayIndex);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                SevenSegDisplay.Off(DisplayIndex);
+            }
         }
 
         public int DisplayIndex { get; protected set; }

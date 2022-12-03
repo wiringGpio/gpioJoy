@@ -1,7 +1,6 @@
-﻿using System;
+﻿using PlatformHelper;
+using static PlatformHelper.PlatformHelper;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using wiringGpioExtensions;
 
 namespace GpioManagerObjects
@@ -20,40 +19,62 @@ namespace GpioManagerObjects
 
         public void SetDelay(float delay)
         {
-            StepperMotor.SetDelay(StepperIndex, delay);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.SetDelay(StepperIndex, delay);
+            }
         }
 
         public void Step(int steps)
         {
-            StepperMotor.Step(StepperIndex, steps);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.Step(StepperIndex, steps);
+            }
         }
 
         public void Spin(int direction)
         {
-            StepperMotor.Spin(StepperIndex, direction);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.Spin(StepperIndex, direction);
+            }
         }
 
         public void SetSpeed(float value)
         {
-            StepperMotor.SetSpeed(StepperIndex, value);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.SetSpeed(StepperIndex, value);
+            }
         }
 
         public void Stop()
         {
-            StepperMotor.Stop(StepperIndex);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.Stop(StepperIndex);
+            }
         }
 
         public int TachoCount
         {
             get
             {
-                return StepperMotor.GetTachoCount(StepperIndex);
+                if (RunningPlatform() == Platform.Linux)
+                {
+                    return StepperMotor.GetTachoCount(StepperIndex);
+                }
+                return 0;
             }
         }
 
         public void ResetTachoCount()
         {
-            StepperMotor.ResetTachoCount(StepperIndex);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                StepperMotor.ResetTachoCount(StepperIndex);
+            }
         }
 
        

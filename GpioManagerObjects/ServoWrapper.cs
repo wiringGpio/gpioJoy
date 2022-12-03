@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using PlatformHelper;
+using static PlatformHelper.PlatformHelper;
 
 namespace GpioManagerObjects
 {
@@ -52,8 +50,11 @@ namespace GpioManagerObjects
             //  turn this back into a unit vector with the range
             double initialValue = (double)initialTick / Pin.PwmRange;
 
-            //  set the servo at the center tick
-            Pin.PwmSetValue(initialValue);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                //  set the servo at the center tick
+                Pin.PwmSetValue(initialValue);
+            }
 
             return initialValue;
         }
@@ -67,8 +68,11 @@ namespace GpioManagerObjects
             //  turn this back into a unit vector with the range
             double initialValue = (double)initialTick / Pin.PwmRange;
 
-            //  set the servo at the center tick
-            Pin.PwmSetValue(initialValue);
+            if (RunningPlatform() == Platform.Linux)
+            {
+                //  set the servo at the center tick
+                Pin.PwmSetValue(initialValue);
+            }
 
             return initialValue;
         }

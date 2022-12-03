@@ -107,6 +107,10 @@ namespace GpioJoyUi
         {
             try
             {
+                //  do nothing for non header pins
+                if (pin.PinNumber > 40)
+                    return;
+
                 CheckBox cb = null;
 
                 PinUi.TryGetValue(pin.PinNumber, out cb);
