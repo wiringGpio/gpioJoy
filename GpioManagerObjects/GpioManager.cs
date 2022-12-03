@@ -1065,6 +1065,12 @@ namespace GpioManagerObjects
             }
         }
 
+        static void LoggingCallbackFunction(WiringGpioLogEvent e)
+        {
+            var logEvent = new LogEvent(e);
+            Console.WriteLine($"{logEvent.LogTime}   {logEvent.ObjectName} {logEvent.FunctionName} {logEvent.Log}.");
+        }
+
 
         /// <summary>
         /// Setup function, initializes the wiringPi library and extension library
@@ -1079,6 +1085,7 @@ namespace GpioManagerObjects
                 {
                     return;
                 }
+                wiringGpioExtensions.Logging.WiringGpioSetLoggingCallback(LoggingCallbackFunction);
 
                 //  Set PWM clock to mark space mode
                 GPIO.PwmSetMode(0);
