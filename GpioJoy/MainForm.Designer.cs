@@ -103,7 +103,7 @@
             this.tabControlRobot.Location = new System.Drawing.Point(12, 12);
             this.tabControlRobot.Name = "tabControlRobot";
             this.tabControlRobot.SelectedIndex = 0;
-            this.tabControlRobot.Size = new System.Drawing.Size(852, 506);
+            this.tabControlRobot.Size = new System.Drawing.Size(841, 506);
             this.tabControlRobot.TabIndex = 2;
             // 
             // tabPageRobot
@@ -148,7 +148,7 @@
             this.tabPageRobot.Location = new System.Drawing.Point(4, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRobot.Size = new System.Drawing.Size(844, 473);
+            this.tabPageRobot.Size = new System.Drawing.Size(833, 473);
             this.tabPageRobot.TabIndex = 0;
             this.tabPageRobot.Text = "Home";
             this.tabPageRobot.UseVisualStyleBackColor = true;
