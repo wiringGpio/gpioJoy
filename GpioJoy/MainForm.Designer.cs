@@ -589,6 +589,7 @@
             // 
             // MainForm
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(828, 489);
             this.Controls.Add(this.tabControlRobot);

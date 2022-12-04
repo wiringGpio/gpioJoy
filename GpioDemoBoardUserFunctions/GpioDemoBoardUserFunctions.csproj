@@ -34,6 +34,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GpioJoy, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GpioJoy\bin\Debug\GpioJoy.exe</HintPath>
+    </Reference>
+    <Reference Include="GpioManagerObjects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GpioManagerObjects\bin\Debug\GpioManagerObjects.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,24 +49,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="wiringGpioExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\wiringGpioExtensions\bin\Debug\wiringGpioExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GpioDemoBoardUserFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GpioJoy\GpioJoy.csproj">
-      <Project>{6664ff0b-7d17-4e5b-b90b-b568e4df6865}</Project>
-      <Name>GpioJoy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GpioManagerObjects\GpioManagerObjects.csproj">
-      <Project>{3f9223f4-ae39-4a30-a6c5-a5997abc554a}</Project>
-      <Name>GpioManagerObjects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj">
-      <Project>{ce36e943-f4f4-46c6-b6dc-c63968cab19e}</Project>
-      <Name>wiringGpioExtensions-NFW4</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

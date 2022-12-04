@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioManagerObjects", "GpioM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wiringGpioExtensions-NFW4", "wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj", "{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioDemoBoardUserFunctions", "GpioDemoBoardUserFunctions\GpioDemoBoardUserFunctions.csproj", "{A958C8E0-6BE0-482C-8453-DFE3C2806416}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,30 +137,6 @@ Global
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|x86.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Any CPU.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Any CPU.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Mixed Platforms.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|x86.ActiveCfg = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|x86.Build.0 = Debug|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|x86.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|x86.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Any CPU.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Any CPU.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
-		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

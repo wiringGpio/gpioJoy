@@ -283,6 +283,7 @@ namespace SimpleJoy
                             //  Catch thread run interrupt exception and exit
                             if (!RunPollingThread)
                                 return;
+                            Console.WriteLine($"Exception in PollingThreadRun {e}");
                         }
                     }
                     fs.Close();
