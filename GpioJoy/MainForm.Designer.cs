@@ -103,7 +103,7 @@
             this.tabControlRobot.Location = new System.Drawing.Point(12, 12);
             this.tabControlRobot.Name = "tabControlRobot";
             this.tabControlRobot.SelectedIndex = 0;
-            this.tabControlRobot.Size = new System.Drawing.Size(841, 506);
+            this.tabControlRobot.Size = new System.Drawing.Size(818, 506);
             this.tabControlRobot.TabIndex = 2;
             // 
             // tabPageRobot
@@ -148,7 +148,7 @@
             this.tabPageRobot.Location = new System.Drawing.Point(4, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRobot.Size = new System.Drawing.Size(833, 473);
+            this.tabPageRobot.Size = new System.Drawing.Size(810, 473);
             this.tabPageRobot.TabIndex = 0;
             this.tabPageRobot.Text = "Home";
             this.tabPageRobot.UseVisualStyleBackColor = true;
@@ -557,7 +557,7 @@
             this.tabPageGpio.Controls.Add(this.gpioTab);
             this.tabPageGpio.Location = new System.Drawing.Point(4, 29);
             this.tabPageGpio.Name = "tabPageGpio";
-            this.tabPageGpio.Size = new System.Drawing.Size(796, 432);
+            this.tabPageGpio.Size = new System.Drawing.Size(810, 473);
             this.tabPageGpio.TabIndex = 4;
             this.tabPageGpio.Text = "GPIO";
             this.tabPageGpio.UseVisualStyleBackColor = true;
