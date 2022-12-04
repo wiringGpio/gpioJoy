@@ -598,7 +598,10 @@ namespace GpioJoy
         {
             //  add ourselves to the loaded assemblies collection
             var ourselves = System.Reflection.Assembly.GetExecutingAssembly();
-            LoadedAssemblies.Add(ourselves.ManifestModule.Name, ourselves);
+            if (!LoadedAssemblies.ContainsKey(ourselves.ManifestModule.Name))
+            {
+                LoadedAssemblies.Add(ourselves.ManifestModule.Name, ourselves);
+            }
 
             //  see if we need to load any other assemblies
             var assemblyNodes = functionsElement.SelectNodes("Assembly");
