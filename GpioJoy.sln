@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioJoyUi", "GpioJoyUi\GpioJoyUi.csproj", "{6664FF0B-7D17-4E5B-B90B-B568E4DF6865}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioJoy", "GpioJoy\GpioJoy.csproj", "{6664FF0B-7D17-4E5B-B90B-B568E4DF6865}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleJoy", "SimpleJoy\SimpleJoy.csproj", "{2F0BE4B3-896A-44B8-824E-8B4C09EAB17A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformHelper", "Platform\PlatformHelper.csproj", "{CD8401F8-D694-4E9C-9B9F-27151CB5A678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformHelper", "PlatformHelper\PlatformHelper.csproj", "{CD8401F8-D694-4E9C-9B9F-27151CB5A678}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioManagerObjects", "GpioManagerObjects\GpioManagerObjects.csproj", "{3F9223F4-AE39-4A30-A6C5-A5997ABC554A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wiringGpioExtensions-NFW4", "wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj", "{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioDemoBoardUserFunctions", "GpioDemoBoardUserFunctions\GpioDemoBoardUserFunctions.csproj", "{A958C8E0-6BE0-482C-8453-DFE3C2806416}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +139,30 @@ Global
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Debug|x86.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Any CPU.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Any CPU.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|x86.ActiveCfg = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.DebugJet|x86.Build.0 = Debug|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|x86.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.Release|x86.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Any CPU.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Any CPU.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
+		{A958C8E0-6BE0-482C-8453-DFE3C2806416}.ReleaseJet|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

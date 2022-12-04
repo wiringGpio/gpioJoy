@@ -7,7 +7,7 @@ using SimpleJoy;
 using PlatformHelper;
 using System.IO;
 
-namespace GpioJoyUi
+namespace GpioJoy
 {
 
 
@@ -17,7 +17,7 @@ namespace GpioJoyUi
         /// <summary>
         /// Constructor
         /// </summary>
-        public MainForm()
+        public MainForm(JoystickManager jsManager, GpioManager pinManager)
         {
             //  Winform initialization function
             InitializeComponent();
@@ -39,13 +39,13 @@ namespace GpioJoyUi
                 buttonRefresh.Visible = false;
             }
 
-      
-            //  instantiate the Pin Manager
-            PinManager = new GpioManager();
-            JsManager = new JoystickManager(PinManager);
-            JsManager.OnStateChanged += JsManager_StateChanged;
-            PinManager.Setup();
 
+            //  instantiate the Pin Manager
+            PinManager = pinManager;
+            JsManager = jsManager;
+
+            JsManager.OnStateChanged += JsManager_StateChanged;
+            
             string configFilePath = "";
             if (PlatformHelper.PlatformHelper.RunningPlatform() == PlatformHelper.Platform.Linux)
                 configFilePath = "/home/pi/GpioJoy/Config/";
@@ -65,9 +65,7 @@ namespace GpioJoyUi
 
                 labelConfigFile.Text = JsManager.ConfigName;
             }
-
-            JsManager.InitXBoxModelPins();
-
+         
             //  setup the UI to use the pin manager
             gpioTab.InitializeGpioTab(PinManager);
 
@@ -297,12 +295,10 @@ namespace GpioJoyUi
 
 
         //  The Joystick
-        JoystickManager JsManager;
+        public JoystickManager JsManager { get; protected set; }
           //
         public bool JoyStickConnected { get { return JsManager.Joystick.IsConnected; } }
         static string NoneFound = "none found";
-
-        int PwmPower = 0;
 
         /// <summary>
         /// Keyboard Input Handling 

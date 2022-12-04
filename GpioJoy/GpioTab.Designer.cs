@@ -1,4 +1,4 @@
-﻿namespace GpioJoyUi
+﻿namespace GpioJoy
 {
     partial class GpioTab
     {
@@ -81,7 +81,7 @@
             this.checkBox38 = new System.Windows.Forms.CheckBox();
             this.checkBox39 = new System.Windows.Forms.CheckBox();
             this.checkBox40 = new System.Windows.Forms.CheckBox();
-            this.Refresh = new System.Windows.Forms.Button();
+            this.BtnRefresh = new System.Windows.Forms.Button();
             this.groupBoxPinDirection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPwm)).BeginInit();
             this.SuspendLayout();
@@ -734,7 +734,7 @@
             this.radioButtonOut.Location = new System.Drawing.Point(10, 101);
             this.radioButtonOut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.radioButtonOut.Name = "radioButtonOut";
-            this.radioButtonOut.Size = new System.Drawing.Size(74, 20);
+            this.radioButtonOut.Size = new System.Drawing.Size(73, 20);
             this.radioButtonOut.TabIndex = 43;
             this.radioButtonOut.TabStop = true;
             this.radioButtonOut.Text = "Output";
@@ -747,7 +747,7 @@
             this.radioButtonIn.Location = new System.Drawing.Point(10, 70);
             this.radioButtonIn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.radioButtonIn.Name = "radioButtonIn";
-            this.radioButtonIn.Size = new System.Drawing.Size(66, 20);
+            this.radioButtonIn.Size = new System.Drawing.Size(65, 20);
             this.radioButtonIn.TabIndex = 44;
             this.radioButtonIn.TabStop = true;
             this.radioButtonIn.Text = "Input";
@@ -793,7 +793,7 @@
             this.checkBoxOnOff.AutoSize = true;
             this.checkBoxOnOff.Location = new System.Drawing.Point(35, 185);
             this.checkBoxOnOff.Name = "checkBoxOnOff";
-            this.checkBoxOnOff.Size = new System.Drawing.Size(91, 20);
+            this.checkBoxOnOff.Size = new System.Drawing.Size(90, 20);
             this.checkBoxOnOff.TabIndex = 52;
             this.checkBoxOnOff.Text = "On / Off";
             this.checkBoxOnOff.UseVisualStyleBackColor = true;
@@ -815,7 +815,7 @@
             this.labelPwmRange.AutoSize = true;
             this.labelPwmRange.Location = new System.Drawing.Point(7, 162);
             this.labelPwmRange.Name = "labelPwmRange";
-            this.labelPwmRange.Size = new System.Drawing.Size(56, 16);
+            this.labelPwmRange.Size = new System.Drawing.Size(55, 16);
             this.labelPwmRange.TabIndex = 50;
             this.labelPwmRange.Text = "Range:";
             // 
@@ -831,7 +831,7 @@
             this.labelPwmValue.AutoSize = true;
             this.labelPwmValue.Location = new System.Drawing.Point(167, 195);
             this.labelPwmValue.Name = "labelPwmValue";
-            this.labelPwmValue.Size = new System.Drawing.Size(32, 16);
+            this.labelPwmValue.Size = new System.Drawing.Size(31, 16);
             this.labelPwmValue.TabIndex = 48;
             this.labelPwmValue.Text = "---";
             this.labelPwmValue.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -841,7 +841,7 @@
             this.checkBoxEnableJs.AutoSize = true;
             this.checkBoxEnableJs.Location = new System.Drawing.Point(8, 311);
             this.checkBoxEnableJs.Name = "checkBoxEnableJs";
-            this.checkBoxEnableJs.Size = new System.Drawing.Size(147, 20);
+            this.checkBoxEnableJs.Size = new System.Drawing.Size(146, 20);
             this.checkBoxEnableJs.TabIndex = 47;
             this.checkBoxEnableJs.Text = "Enable Joystick";
             this.checkBoxEnableJs.UseVisualStyleBackColor = true;
@@ -863,7 +863,7 @@
             this.radioButtonPwm.AutoSize = true;
             this.radioButtonPwm.Location = new System.Drawing.Point(10, 132);
             this.radioButtonPwm.Name = "radioButtonPwm";
-            this.radioButtonPwm.Size = new System.Drawing.Size(50, 20);
+            this.radioButtonPwm.Size = new System.Drawing.Size(49, 20);
             this.radioButtonPwm.TabIndex = 45;
             this.radioButtonPwm.TabStop = true;
             this.radioButtonPwm.Text = "PWM";
@@ -940,22 +940,22 @@
             this.checkBox40.UseVisualStyleBackColor = false;
             this.checkBox40.CheckedChanged += new System.EventHandler(this.checkBoxPin_CheckedChanged);
             // 
-            // Refresh
+            // BtnRefresh
             // 
-            this.Refresh.Location = new System.Drawing.Point(594, 381);
-            this.Refresh.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Refresh.Name = "Refresh";
-            this.Refresh.Size = new System.Drawing.Size(112, 35);
-            this.Refresh.TabIndex = 50;
-            this.Refresh.Text = "Refresh";
-            this.Refresh.UseVisualStyleBackColor = true;
-            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
+            this.BtnRefresh.Location = new System.Drawing.Point(594, 381);
+            this.BtnRefresh.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.BtnRefresh.Name = "BtnRefresh";
+            this.BtnRefresh.Size = new System.Drawing.Size(112, 35);
+            this.BtnRefresh.TabIndex = 50;
+            this.BtnRefresh.Text = "Refresh";
+            this.BtnRefresh.UseVisualStyleBackColor = true;
+            this.BtnRefresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // GpioTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.Refresh);
+            this.Controls.Add(this.BtnRefresh);
             this.Controls.Add(this.checkBox40);
             this.Controls.Add(this.checkBox39);
             this.Controls.Add(this.checkBox38);
@@ -1055,7 +1055,7 @@
         private System.Windows.Forms.CheckBox checkBox38;
         private System.Windows.Forms.CheckBox checkBox39;
         private System.Windows.Forms.CheckBox checkBox40;
-        private System.Windows.Forms.Button Refresh;
+        private System.Windows.Forms.Button BtnRefresh;
         private System.Windows.Forms.Label labelPwmValue;
         private System.Windows.Forms.CheckBox checkBoxEnableJs;
         private System.Windows.Forms.TrackBar trackBarPwm;

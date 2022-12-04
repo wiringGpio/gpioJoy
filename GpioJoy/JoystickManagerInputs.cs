@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
-namespace GpioJoyUi
+namespace GpioJoy
 {
     /// <summary>
     /// Joystick Control
@@ -225,7 +225,7 @@ namespace GpioJoyUi
                     }
                     catch (Exception e)
                     {
-                        //Console.WriteLine("Exception in set ui " + e.ToString());
+                        Console.WriteLine($"ProcessInputUi exception: {e}");
                     }
                 });
             }

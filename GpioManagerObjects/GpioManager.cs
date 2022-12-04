@@ -251,6 +251,7 @@ namespace GpioManagerObjects
                 catch (Exception e)
                 {
                     //  invalid pins for this motor
+                    Console.WriteLine($"Invalid pins for this motor: {e}");
                     return null;
                 }
 
@@ -271,6 +272,7 @@ namespace GpioManagerObjects
                     catch (Exception e)
                     {
                         //  invalid pins for this motor
+                        Console.WriteLine($"Invalid pin for this motor: {e}");
                         return null;
                     }
                 }
@@ -635,7 +637,7 @@ namespace GpioManagerObjects
             }
             catch (Exception e)
             {
-                //  invalid pins for this motor
+                Console.WriteLine($"Invalid pin for this motor: {e}");
                 return null;
             }
 
@@ -764,7 +766,7 @@ namespace GpioManagerObjects
                 }
                 catch (Exception e)
                 {
-                    //  invalid pins for this display
+                    Console.WriteLine($"Invalid pin for this display: {e}");
                     return null;
                 }
 
@@ -784,7 +786,7 @@ namespace GpioManagerObjects
                     }
                     catch (Exception e)
                     {
-                        //  invalid pins for this display
+                        Console.WriteLine($"Invalid pin for this display: {e}");
                         return null;
                     }
                 }
@@ -1016,7 +1018,7 @@ namespace GpioManagerObjects
                 }
                 catch (Exception e)
                 {
-                    // this pin does not exist
+                    Console.WriteLine($"This pin does not exist: {e}");
                 }
 
                 setPin = setPin + 1;

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CD8401F8-D694-4E9C-9B9F-27151CB5A678}</ProjectGuid>
+    <ProjectGuid>{A958C8E0-6BE0-482C-8453-DFE3C2806416}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PlatformHelper</RootNamespace>
-    <AssemblyName>PlatformHelper</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>GpioDemoBoardUserFunctions</RootNamespace>
+    <AssemblyName>GpioDemoBoardUserFunctions</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,15 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Platform.cs" />
+    <Compile Include="GpioDemoBoardUserFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GpioJoy\GpioJoy.csproj">
+      <Project>{6664ff0b-7d17-4e5b-b90b-b568e4df6865}</Project>
+      <Name>GpioJoy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GpioManagerObjects\GpioManagerObjects.csproj">
+      <Project>{3f9223f4-ae39-4a30-a6c5-a5997abc554a}</Project>
+      <Name>GpioManagerObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj">
+      <Project>{ce36e943-f4f4-46c6-b6dc-c63968cab19e}</Project>
+      <Name>wiringGpioExtensions-NFW4</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

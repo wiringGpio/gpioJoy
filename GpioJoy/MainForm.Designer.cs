@@ -1,4 +1,4 @@
-﻿namespace GpioJoyUi
+﻿namespace GpioJoy
 {
     partial class MainForm
     {
@@ -72,10 +72,10 @@
             this.buttonConnectJoystick = new System.Windows.Forms.Button();
             this.comboBoxJoystickPaths = new System.Windows.Forms.ComboBox();
             this.tabPageGpio = new System.Windows.Forms.TabPage();
-            this.gpioTab = new GpioJoyUi.GpioTab();
+            this.gpioTab = new GpioJoy.GpioTab();
             this.backgroundWorkerDisconnect = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorkerConnectJoystick = new System.ComponentModel.BackgroundWorker();
-            this.gpioTab1 = new GpioJoyUi.GpioTab();
+            this.gpioTab1 = new GpioJoy.GpioTab();
             this.tabControlRobot.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRT)).BeginInit();

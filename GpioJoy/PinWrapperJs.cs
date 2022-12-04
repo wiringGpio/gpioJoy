@@ -5,7 +5,7 @@ using System.Text;
 using wiringGpioExtensions;
 using GpioManagerObjects;
 
-namespace GpioJoyUi
+namespace GpioJoy
 {
     /// <summary>
     /// Pin Wrapper for Joystick

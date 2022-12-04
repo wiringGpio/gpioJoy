@@ -7,7 +7,7 @@ using GpioManagerObjects;
 using System.Reflection;
 using System.Linq;
 
-namespace GpioJoyUi
+namespace GpioJoy
 {
     public class FunctionAssignmentContainer
     {
@@ -202,7 +202,8 @@ namespace GpioJoyUi
             }
             catch (Exception e)
             {
-                throw;
+                Console.WriteLine($"SetControlAssignments exception: {e}");
+                throw e;
             }
         }
 
@@ -260,7 +261,7 @@ namespace GpioJoyUi
 
         //  References to objects
         public SimpleJoystick Joystick { get; protected set; }
-        //  Reference to the pin  managert
+        //  Reference to the pin  manager
         public GpioManager PinManager { get; protected set; }
 
 

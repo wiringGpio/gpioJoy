@@ -1,22 +1,22 @@
-﻿using GpioManagerObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using GpioJoy;
+using GpioManagerObjects;
 using wiringGpioExtensions;
 
-namespace GpioJoyUi
+namespace GpioDemoBoardUserFunctions
 {
-    public partial class JoystickManager
+    public static class UserFunctions
     {
         //  Initialization
         #region Initialization
-        List<GpioPinWrapper> XBoxModelPinsLeftSide;
-        List<GpioPinWrapper> XBoxModelPinsRightSide;
-        List<GpioPinWrapper> XBoxModelPinsHomeRow;
-        List<GpioPinWrapper> XBoxModelPins
+        static List<GpioPinWrapper> XBoxModelPinsLeftSide;
+        static List<GpioPinWrapper> XBoxModelPinsRightSide;
+        static List<GpioPinWrapper> XBoxModelPinsHomeRow;
+        static List<GpioPinWrapper> XBoxModelPins
         {
             get
             {
@@ -28,21 +28,25 @@ namespace GpioJoyUi
             }
         }
 
-        SevenSegDisplayWrapper BoardDisplayDriver;
-        SevenSegDisplayWrapper RemoteDisplayDriver;
-        ServoWrapper ServoOne;
-        ServoWrapper ServoTwo;
-        HBridgeWrapper Motor2;
-        HBridgeWrapper MotorNxt;
-        GpioPinWrapper Motor1;
-        StepperWrapper Stepper1;
-        StepperWrapper Stepper2;
-        GpioPinWrapper RedPin;
-        GpioPinWrapper GreenPin;
-        GpioPinWrapper BluePin;
+        static SevenSegDisplayWrapper BoardDisplayDriver;
+        static SevenSegDisplayWrapper RemoteDisplayDriver;
+        static ServoWrapper ServoOne;
+        static ServoWrapper ServoTwo;
+        static HBridgeWrapper Motor2;
+        static HBridgeWrapper MotorNxt;
+        static GpioPinWrapper Motor1;
+        static StepperWrapper Stepper1;
+        static StepperWrapper Stepper2;
+        static GpioPinWrapper RedPin;
+        static GpioPinWrapper GreenPin;
+        static GpioPinWrapper BluePin;
 
-        public void InitXBoxModelPins()
+        static GpioManager PinManager => GpioJoyProgram.PinManager;
+
+        static public void InitXBoxModelPins()
         {
+            Console.WriteLine("Init XBox  Model Pins");
+
             BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
             RemoteDisplayDriver = PinManager.GetSevenSegDisplayDriver("RemoteSevenSeg");
 
@@ -93,43 +97,8 @@ namespace GpioJoyUi
             XBoxModelPinsHomeRow.Add(PinManager.GetPin(213));      //  start
         }
 
-     
-        //  function to toggle the configuration to the next one, used by all configurations
-        public void HomeBtn(bool input)
-        {
-            var tickNow = System.Environment.TickCount;
-            if (input && System.Environment.TickCount - HomeBtnChangeTick > ButtonDelay)
-            {
-                HomeConfiguration();
-                HomeBtnChangeTick = tickNow;
 
-                OnStateChanged?.Invoke(this, new EventArgs());
-            }
-        }
 
-        public void BackBtn(bool input)
-        {
-            var tickNow = System.Environment.TickCount;
-            if (input && System.Environment.TickCount - BackBtnChangeTick > ButtonDelay)
-            {
-                ToggleConfiguration(-1);
-                BackBtnChangeTick = tickNow;
-
-                OnStateChanged?.Invoke(this, new EventArgs());
-            }
-        }
-
-        public void StartBtn(bool input)
-        {
-            var tickNow = System.Environment.TickCount;
-            if (input && System.Environment.TickCount - StartBtnChangeTick > ButtonDelay)
-            {
-                ToggleConfiguration(1);
-                StartBtnChangeTick = tickNow;
-
-                OnStateChanged?.Invoke(this, new EventArgs());
-            }
-        }
 
         #endregion
 
@@ -139,10 +108,10 @@ namespace GpioJoyUi
 
 
         //  Servo speed up/down
-        double ServoOneValue = 1.5;
-        double ServoTwoValue = 1.5;
+        static double ServoOneValue = 1.5;
+        static double ServoTwoValue = 1.5;
 
-        public void DPadUpServoPlus(bool input)
+        static public void DPadUpServoPlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -155,12 +124,12 @@ namespace GpioJoyUi
                 ServoOne.SetPulse(ServoOneValue);
 
                 BoardDisplayDriver.Set(string.Format("{0:0.00}", ServoOneValue));
-                
+
                 DpadUpChangeTick = tickNow;
             }
         }
 
-        public void DPadDownServoMinus(bool input)
+        static public void DPadDownServoMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -170,15 +139,15 @@ namespace GpioJoyUi
                 if (ServoOneValue <= 1.0)
                     ServoOneValue = 1.0;
 
-               ServoOne.SetPulse(ServoOneValue);
+                ServoOne.SetPulse(ServoOneValue);
 
-               BoardDisplayDriver.Set(string.Format("{0:0.00}", ServoOneValue));
+                BoardDisplayDriver.Set(string.Format("{0:0.00}", ServoOneValue));
 
                 DpadDownChangeTick = tickNow;
             }
         }
 
-        public void DPadRightServoCenter(bool input)
+        static public void DPadRightServoCenter(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -186,14 +155,14 @@ namespace GpioJoyUi
                 ServoOne.Center();
                 ServoOneValue = 1.5;
 
-               BoardDisplayDriver.Set(string.Format("{0:0.00}", ServoOneValue));
-                
+                BoardDisplayDriver.Set(string.Format("{0:0.00}", ServoOneValue));
+
                 DpadRightChangeTick = tickNow;
             }
         }
 
-        
-        public void YBtnServoTwoPlus(bool input)
+
+        static public void YBtnServoTwoPlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - YBtnChangeTick > ButtonDelay)
@@ -205,14 +174,14 @@ namespace GpioJoyUi
 
                 ServoTwo.SetPulse(ServoTwoValue);
 
-                if ( RemoteDisplayDriver != null)
+                if (RemoteDisplayDriver != null)
                     RemoteDisplayDriver.Set(string.Format("{0:0.00}", ServoTwoValue));
-                
+
                 YBtnChangeTick = tickNow;
             }
         }
 
-        public void ABtnServoTwoOneMinus(bool input)
+        static public void ABtnServoTwoOneMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - ABtnChangeTick > ButtonDelay)
@@ -231,7 +200,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void BBtServoTwoCenter(bool input)
+        static public void BBtServoTwoCenter(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - BBtnChangeTick > ButtonDelay)
@@ -252,11 +221,11 @@ namespace GpioJoyUi
         //  Motors
         #region Motors
 
-        double MotorValueOne = 0.0;
-        double MotorValueTwo = 0.0;
-        double MotorValueNxt = 0.0;
+        static double MotorValueOne = 0.0;
+        static double MotorValueTwo = 0.0;
+        static double MotorValueNxt = 0.0;
 
-        public void SetMotorOneDisplay()
+        static public void SetMotorOneDisplay()
         {
             if (MotorValueOne < 0.0)
             {
@@ -271,7 +240,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void SetMotorTwoDisplay()
+        static public void SetMotorTwoDisplay()
         {
             if (MotorValueTwo < 0.0)
             {
@@ -293,7 +262,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void SetMotorNxtDisplay()
+        static public void SetMotorNxtDisplay()
         {
             if (MotorValueNxt < 0.0)
             {
@@ -315,7 +284,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void YBtnMotorTwoPlus(bool input)
+        static public void YBtnMotorTwoPlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - YBtnChangeTick > ButtonDelay)
@@ -330,7 +299,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void ABtnMotorTwoMinus(bool input)
+        static public void ABtnMotorTwoMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - ABtnChangeTick > ButtonDelay)
@@ -345,22 +314,22 @@ namespace GpioJoyUi
             }
         }
 
-        public void BBtnMotorTwoStop(bool input)
+        static public void BBtnMotorTwoStop(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - BBtnChangeTick > ButtonDelay)
             {
                 MotorValueTwo = 0.0;
-               
+
                 Motor2.SetHBridgeValue(0, MotorValueTwo);
                 SetMotorTwoDisplay();
                 BBtnChangeTick = tickNow;
             }
         }
 
-      
 
-        public void DPadUpMotorOnePlus(bool input)
+
+        static public void DPadUpMotorOnePlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -368,14 +337,14 @@ namespace GpioJoyUi
                 MotorValueOne += 0.05;
                 if (MotorValueOne > 1.0)
                     MotorValueOne = 1.0;
-               
+
                 Motor1.PwmSetValue(MotorValueOne);
                 SetMotorOneDisplay();
                 DpadUpChangeTick = tickNow;
             }
         }
 
-        public void DPadDownMotorOneMinus(bool input)
+        static public void DPadDownMotorOneMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -390,7 +359,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void DPadRightMotorOneStop(bool input)
+        static public void DPadRightMotorOneStop(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -404,7 +373,7 @@ namespace GpioJoyUi
         }
 
 
-        public void RightBumperMotorNxtPlus(bool input)
+        static public void RightBumperMotorNxtPlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - RightBumperChangeTick > ButtonDelay)
@@ -419,7 +388,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void LeftBumperMotorNxtMinus(bool input)
+        static public void LeftBumperMotorNxtMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - LeftBumperChangeTick > ButtonDelay)
@@ -434,7 +403,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void DPadLeftMotorNxtStop(bool input)
+        static public void DPadLeftMotorNxtStop(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadLeftChangeTick > ButtonDelay)
@@ -453,7 +422,7 @@ namespace GpioJoyUi
         //
         #region GpioDemo
 
-        public void LeftBumperStartGpioJoyDemo(bool input)
+        static public void LeftBumperStartGpioJoyDemo(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - LeftBumperChangeTick > ButtonDelay)
@@ -470,7 +439,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void RightBumperStopGpioJoyDemo(bool input)
+        static public void RightBumperStopGpioJoyDemo(bool input)
         {
             if (input)
             {
@@ -501,13 +470,13 @@ namespace GpioJoyUi
         }
 
 
-      
 
 
-        bool GpioDemoRun = false;
-        Thread GpioDemoThread;
 
-        public void PinOnOff(GpioPinWrapper pin, int sleepMs)
+        static bool GpioDemoRun = false;
+        static Thread GpioDemoThread;
+
+        static public void PinOnOff(GpioPinWrapper pin, int sleepMs)
         {
 
             //if (pin.Mode == PinMode.PWMOutput)
@@ -521,7 +490,7 @@ namespace GpioJoyUi
             pin.Write(0);
         }
 
-        public void PinOn(GpioPinWrapper pin)
+        static public void PinOn(GpioPinWrapper pin)
         {
             //var thisPin = PinManager.GetPin(pin);
             //if (thisPin.Mode == PinMode.PWMOutput)
@@ -530,7 +499,7 @@ namespace GpioJoyUi
             pin.Write(1);
         }
 
-        public void PinOff(GpioPinWrapper pin)
+        static public void PinOff(GpioPinWrapper pin)
         {
             //var thisPin = PinManager.GetPin(pin);
             //if (thisPin.Mode == PinMode.PWMOutput)
@@ -539,7 +508,7 @@ namespace GpioJoyUi
             pin.Write(0);
         }
 
-        public void BlinkHome(int delay)
+        static public void BlinkHome(int delay)
         {
             try
             {
@@ -572,7 +541,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void GpioDemoThreadRunFunction()
+        static public void GpioDemoThreadRunFunction()
         {
             int counter = 9;
             int direction = -1;
@@ -670,7 +639,7 @@ namespace GpioJoyUi
         //
         #region ThreeDofConfig
 
-        public void DpadUpThreeDof(bool input)
+        static public void DpadUpThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -682,7 +651,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void DpadDownThreeDof(bool input)
+        static public void DpadDownThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -694,7 +663,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void DpadLeftThreeDof(bool input)
+        static public void DpadLeftThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -706,7 +675,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void DpadRightThreeDof(bool input)
+        static public void DpadRightThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
@@ -718,7 +687,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void BBtnThreeDof(bool input)
+        static public void BBtnThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - BBtnChangeTick > ButtonDelay)
@@ -730,7 +699,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void XBtnThreeDof(bool input)
+        static public void XBtnThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - XBtnChangeTick > ButtonDelay)
@@ -742,7 +711,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void LeftBumperThreeDof(bool input)
+        static public void LeftBumperThreeDof(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - LeftBumperChangeTick > ButtonDelay)
@@ -763,7 +732,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void RightBumperThreeDof(bool input)
+        static public void RightBumperThreeDof(bool input)
         {
             if (input)
             {
@@ -785,10 +754,10 @@ namespace GpioJoyUi
             }
         }
 
-        bool ThreeDofDemoRun = false;
-        Thread ThreeDofDemoThread;
+        static bool ThreeDofDemoRun = false;
+        static Thread ThreeDofDemoThread;
 
-        public void ThreeDofThreadRunFunction()
+        static public void ThreeDofThreadRunFunction()
         {
 
 
@@ -823,11 +792,11 @@ namespace GpioJoyUi
         //
         #region RGB
 
-        double RedValue = 1.0;
-        double GreenValue = 1.0;
-        double BlueValue = 1.0;
-        
-        public void SetRgb()
+        static double RedValue = 1.0;
+        static double GreenValue = 1.0;
+        static double BlueValue = 1.0;
+
+        static public void SetRgb()
         {
             RedPin.PwmSetValue(RedValue);
             GreenPin.PwmSetValue(GreenValue);
@@ -844,7 +813,7 @@ namespace GpioJoyUi
 
         }
 
-        public void YBtnRGBYellow(bool input)
+        static public void YBtnRGBYellow(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - YBtnChangeTick > ButtonDelay)
@@ -855,12 +824,12 @@ namespace GpioJoyUi
                 GreenValue = 0.9;
                 BlueValue = 1.0;
                 SetRgb();
-               
-               
+
+
             }
         }
 
-        public void ABtnRGBGreen(bool input)
+        static public void ABtnRGBGreen(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - ABtnChangeTick > ButtonDelay)
@@ -875,7 +844,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void BBtnRGBRed(bool input)
+        static public void BBtnRGBRed(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - BBtnChangeTick > ButtonDelay)
@@ -889,31 +858,31 @@ namespace GpioJoyUi
 ;
         }
 
-        public void XBtnRGBBlue(bool input)
+        static public void XBtnRGBBlue(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - XBtnChangeTick > ButtonDelay)
             {
-                    XBtnChangeTick = tickNow;
+                XBtnChangeTick = tickNow;
                 BlueValue -= .1;
                 if (BlueValue <= 0.0)
                     BlueValue = 0.0;
                 SetRgb();
-                
+
             }
         }
 
-        public void DpadRightRGBReset(bool input)
+        static public void DpadRightRGBReset(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - DpadChangeTick > ButtonDelay)
             {
-                    DpadRightChangeTick = tickNow;
+                DpadRightChangeTick = tickNow;
                 RedValue = 1.0;
                 GreenValue = 1.0;
                 BlueValue = 1.0;
                 SetRgb();
-                
+
             }
         }
 
@@ -924,12 +893,12 @@ namespace GpioJoyUi
         //
         #region Steppers
 
-        float StepperOneDelay = 1.0f;
-        int StepperOneDirection = 1;
-        float StepperTwoDelay = 1.0f;
-        int StepperTwoDirection = 1;
+        static float StepperOneDelay = 1.0f;
+        static int StepperOneDirection = 1;
+        static float StepperTwoDelay = 1.0f;
+        static int StepperTwoDirection = 1;
 
-        public void YBtnStepperOnePlus(bool input)
+        static public void YBtnStepperOnePlus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - YBtnChangeTick > ButtonDelay)
@@ -938,7 +907,7 @@ namespace GpioJoyUi
                     StepperOneDelay += 1.0f;
                 else if (Math.Abs(StepperOneDelay) < 100)
                     StepperOneDelay += 10f;
-                else 
+                else
                     StepperOneDelay += 50;
 
                 //  switching directions
@@ -953,7 +922,7 @@ namespace GpioJoyUi
                     StepperOneDirection = -1;
 
                 Stepper1.SetDelay(Math.Abs(StepperOneDelay));
-                Stepper1.Spin(StepperOneDirection > 0 ? 1:-1);
+                Stepper1.Spin(StepperOneDirection > 0 ? 1 : -1);
 
                 int delayMs = 0;
                 if (StepperOneDelay > 0.0f)
@@ -966,7 +935,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void ABtnStepperOneMinus(bool input)
+        static public void ABtnStepperOneMinus(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - ABtnChangeTick > ButtonDelay)
@@ -984,7 +953,7 @@ namespace GpioJoyUi
                     StepperOneDelay = (StepperOneDirection > 0 ? -1.0f : 1.0f);
                 }
 
-               
+
 
                 if (StepperOneDelay > 0.0f)
                     StepperOneDirection = 1;
@@ -1000,13 +969,13 @@ namespace GpioJoyUi
                 else
                     delayMs = (int)(StepperOneDelay - 0.5);
 
-                
+
                 BoardDisplayDriver.Set(string.Format("{0}", delayMs.ToString()));
                 ABtnChangeTick = tickNow;
             }
         }
 
-        public void BBtnStepperOneStop(bool input)
+        static public void BBtnStepperOneStop(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - BBtnChangeTick > ButtonDelay)
@@ -1019,7 +988,7 @@ namespace GpioJoyUi
             }
         }
 
-        public void XBtnStepperOneResetDelay(bool input)
+        static public void XBtnStepperOneResetDelay(bool input)
         {
             var tickNow = System.Environment.TickCount;
             if (input && System.Environment.TickCount - XBtnChangeTick > ButtonDelay)
@@ -1034,33 +1003,33 @@ namespace GpioJoyUi
 
 
 
-     
+
         #endregion
 
         //  Button Timer Handling
         //  used to prevent high frequency spamming of functions
         #region ButtonTimer
 
-        int LeftStickBtnChangeTick = 0;
-        int RightStickBtnChangeTick = 0;
-        int ABtnChangeTick = 0;
-        int BBtnChangeTick = 0;
-        int XBtnChangeTick = 0;
-        int YBtnChangeTick = 0;
-        int LeftBumperChangeTick = 0;
-        int RightBumperChangeTick = 0;
+        static int LeftStickBtnChangeTick = 0;
+        static int RightStickBtnChangeTick = 0;
+        static int ABtnChangeTick = 0;
+        static int BBtnChangeTick = 0;
+        static int XBtnChangeTick = 0;
+        static int YBtnChangeTick = 0;
+        static int LeftBumperChangeTick = 0;
+        static int RightBumperChangeTick = 0;
 
-        int BackBtnChangeTick = 0;
-        int StartBtnChangeTick = 0;
-        int HomeBtnChangeTick = 0;
-        int DpadUpChangeTick = 0;
-        int DpadDownChangeTick = 0;
-        int DpadLeftChangeTick = 0;
-        int DpadRightChangeTick = 0;
+        static int BackBtnChangeTick = 0;
+        static int StartBtnChangeTick = 0;
+        static int HomeBtnChangeTick = 0;
+        static int DpadUpChangeTick = 0;
+        static int DpadDownChangeTick = 0;
+        static int DpadLeftChangeTick = 0;
+        static int DpadRightChangeTick = 0;
 
-        public int ButtonDelay = 333;
+        static public int ButtonDelay = 333;
 
-        int DpadChangeTick
+        static int DpadChangeTick
         {
 
             get

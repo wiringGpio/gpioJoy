@@ -7,9 +7,9 @@
     <ProjectGuid>{6664FF0B-7D17-4E5B-B90B-B568E4DF6865}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GpioJoyUi</RootNamespace>
+    <RootNamespace>GpioJoy</RootNamespace>
     <AssemblyName>GpioJoy</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -70,7 +70,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="GpioJoyApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GpioTab.resx">
       <DependentUpon>GpioTab.cs</DependentUpon>
@@ -103,7 +103,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Platform\PlatformHelper.csproj">
+    <ProjectReference Include="..\PlatformHelper\PlatformHelper.csproj">
       <Project>{CD8401F8-D694-4E9C-9B9F-27151CB5A678}</Project>
       <Name>PlatformHelper</Name>
     </ProjectReference>

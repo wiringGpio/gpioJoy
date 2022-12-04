@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using wiringGpioExtensions;
 using GpioManagerObjects;
 
-namespace GpioJoyUi
+namespace GpioJoy
 {
 
     public partial class GpioTab : UserControl
