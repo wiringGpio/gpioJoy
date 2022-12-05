@@ -558,7 +558,7 @@ namespace GpioJoy
         /// <summary>
         /// Constructor
         /// </summary>
-        public JoystickSevenSegDisplay(SevenSegDisplayWrapper display, int direction, JoystickControl assignment) : base(null, null, assignment)
+        public JoystickSevenSegDisplay(SevenSegDisplayWrapper display, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
             Direction = direction;
             Display = display;

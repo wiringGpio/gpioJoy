@@ -834,7 +834,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
                     //  create a new input for this stick (vector) assignment
-                    newInput = new JoystickSevenSegDisplay(display, direction, assignment);
+                    newInput = new JoystickSevenSegDisplay(display, direction, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
                     //  add the assignment to all pins used for this seven segment display
                     foreach (var nextPin in display.Pins)
                     {
