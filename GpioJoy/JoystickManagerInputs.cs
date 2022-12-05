@@ -591,7 +591,6 @@ namespace GpioJoy
 
                 if (CurrentValue == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("JOystick seven off: ");
                     Display.Off();
                 }
                 else
@@ -603,8 +602,18 @@ namespace GpioJoy
                 }
             }
         }
-
         
+        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (Active)
+            {
+                if (Control.Value > 0)
+                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                else
+                    ProcessInput((double)Control.Value / (double)(Control.Minimum * -1), false);
+            }
+        }
+
     }
 
 
