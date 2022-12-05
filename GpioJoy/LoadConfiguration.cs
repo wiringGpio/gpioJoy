@@ -26,7 +26,6 @@ namespace GpioJoy
                 XmlDocument configFile = new XmlDocument();
                 configFile.Load(path);
              
-
                 //  Document Element
                 //  <GpioConfig>
                 XmlElement root = configFile.DocumentElement;
@@ -54,7 +53,7 @@ namespace GpioJoy
                 //  Load HBridges
                 //  <HBridgeMotors>
                 var hbridgesElement = root.SelectSingleNode("HBridgeMotors");
-                LoadHBridgeControllers(configName, hbridgesElement, form, pinManager, jsManager);
+                LoadHBridgeMotors(configName, hbridgesElement, form, pinManager, jsManager);
 
                 //  Load Displays
                 //  <SevenSegDisplays>
@@ -62,6 +61,7 @@ namespace GpioJoy
                 LoadSevenSegDisplayDrivers(configName, sevenSegDisplaysElement, form, pinManager, jsManager);
 
                 //  Load joystick input funcitons
+                //  <JoystickFunctions>
                 var functionsElement = root.SelectSingleNode("JoystickFunctions");
                 LoadJoystickFunctionAssemblies(configName, functionsElement, form, jsManager);
                 LoadJoystickFunctions(configName, functionsElement, form, jsManager);
@@ -88,22 +88,11 @@ namespace GpioJoy
             var mcpNodes = mcpsElement.SelectNodes("MCP");
             foreach (XmlNode nextMcp in mcpNodes)
             {
-                //  parse this
-                /*
-                  <MCP>
-                    <Type>Mcp230xx</Type>   //  enum McpType
-                    <Address>32</Address>   //  address should be in decimal
-                    <Base>100</Base>        //  pin base
-                  </MCP>
-                */
-
                 try
                 {
                     var typeNode = nextMcp.SelectSingleNode("Type");
                     if (typeNode == null)
                         continue;
-
-
 
                     Mcp230xxType type;
                     type = (Mcp230xxType)Enum.Parse(typeof(Mcp230xxType), typeNode.InnerText);
@@ -142,15 +131,6 @@ namespace GpioJoy
             var pcaNodes = pcasElement.SelectNodes("PCA");
             foreach (XmlNode nextMcp in pcaNodes)
             {
-                //  parse this
-                /*
-                   <PCA>
-                    <Address>35</Address>       //  address should be in decimal
-                    <Base>300</Base>            //  pin base
-                    <Frequency>50</Frequency>   //  frequency in hertz
-                   </PCA>
-                */
-
                 try
                 {
                     int address;
@@ -339,7 +319,7 @@ namespace GpioJoy
         /// <summary>
         /// Load HBridge Controllers
         /// </summary>
-        public static void LoadHBridgeControllers(string configName, XmlNode hbridgeElement, MainForm form, GpioManager pinManager, JoystickManager jsManager)
+        public static void LoadHBridgeMotors(string configName, XmlNode hbridgeElement, MainForm form, GpioManager pinManager, JoystickManager jsManager)
         {
             if (hbridgeElement == null)
                 return;
@@ -405,18 +385,6 @@ namespace GpioJoy
             var stepperNodes = steppersElement.SelectNodes("StepperDriver");
             foreach (XmlNode nextStepper in stepperNodes)
             {
-                //  Parse This
-                /*
-                 <StepperDriver>
-                    <Sequence>1</Sequence>
-                    <Pins>608,-613,-608, 613</Pins> 
-                    <Polarity>608,610,609</Polarity>    //  Polarity only required if using bipolar stepper
-			        <Polarity>613,611,612</Polarity>    
-                    <Joystick direction="1">RightStickUp</Joystick>    //  Joystick optional
-                    <Joystick direction="-1">RightStickDown</Joystick>
-                </StepperDriver>
-                */
-
                 //  get the stepper
                 StepperWrapper newStepperDriver = null;
                 //  check to see if this stepper is defined by name
@@ -530,7 +498,6 @@ namespace GpioJoy
         }
 
 
-
         /// <summary>
         /// Get PWM range for a pin
         /// </summary>
@@ -605,7 +572,7 @@ namespace GpioJoy
         /// <summary>
         /// Call setup methods for loaded assemblies
         /// </summary>
-        private static void CallSetupMethods(XmlNode assemblyNode, Assembly assembly)
+        static void CallSetupMethods(XmlNode assemblyNode, Assembly assembly)
         {
             var setupNodes = assemblyNode.SelectNodes("Setup");
             foreach (XmlNode nextSetupFn in setupNodes)
@@ -626,8 +593,6 @@ namespace GpioJoy
                     Console.WriteLine($"Unable to get method for {setupClass} and {setupFunction}");
                     continue;
                 }
-
-                //  call this setup method
                 try
                 {
                     method.Invoke(null, null);
@@ -657,11 +622,6 @@ namespace GpioJoy
                     if (methodElement == null)
                         continue;
 
-                    string fnName = "";
-                    XmlElement nameElement = (XmlElement)nextFunction.SelectSingleNode("Name");
-                    if (nameElement != null)
-                        fnName = nameElement.InnerText;
-
                     var assemblyName = methodElement.Attributes["assembly"]?.InnerText;
                     var className = methodElement.Attributes["class"]?.InnerText;
 
@@ -678,8 +638,14 @@ namespace GpioJoy
                                 continue;
                             foreach (XmlNode nextJsNode in joystickNodes)
                             {
-                                var assignment = (JoystickControl)Enum.Parse(typeof(JoystickControl), nextJsNode.InnerText);
+                                string fnName = "";
+                                XmlElement nameElement = (XmlElement)nextFunction.SelectSingleNode("Name");
+                                if (nameElement != null)
+                                    fnName = nameElement.InnerText;
+                                else
+                                    fnName = method.Name;
 
+                                var assignment = (JoystickControl)Enum.Parse(typeof(JoystickControl), nextJsNode.InnerText);
                                 jsManager.AddFunctionAssignment(configName, fnName, form, assignment, method);
                             }
                         }
