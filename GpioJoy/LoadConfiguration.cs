@@ -43,8 +43,8 @@ namespace GpioJoy
 
                 //  Get the root node for our control pins
                 //  <ControlPins>
-                var controlPinsNode = root.SelectSingleNode("ControlPins");
-                LoadControlPins(configName, controlPinsNode, form, pinManager, jsManager);
+                var controlPinsNode = root.SelectSingleNode("PinModes");
+                LoadPinModes(configName, controlPinsNode, form, pinManager, jsManager);
 
                 //  Load stepper drivers
                 //  <StepperDrivers>
@@ -52,8 +52,8 @@ namespace GpioJoy
                 LoadStepperDrivers(configName, steppersElement, form, pinManager, jsManager);
 
                 //  Load HBridges
-                //  <HBridges>
-                var hbridgesElement = root.SelectSingleNode("HBridges");
+                //  <HBridgeMotors>
+                var hbridgesElement = root.SelectSingleNode("HBridgeMotors");
                 LoadHBridgeControllers(configName, hbridgesElement, form, pinManager, jsManager);
 
                 //  Load Displays
@@ -185,7 +185,7 @@ namespace GpioJoy
         /// Load Control Pins
         /// defines how you want to use each pin
         /// </summary>
-        public static void LoadControlPins(string configName, XmlNode controlPinsNode, MainForm form, GpioManager pinManager, JoystickManager jsManager)
+        public static void LoadPinModes(string configName, XmlNode controlPinsNode, MainForm form, GpioManager pinManager, JoystickManager jsManager)
         {
             //  Parse This
             /*
@@ -366,17 +366,9 @@ namespace GpioJoy
             if (hbridgeElement == null)
                 return;
 
-            var hbridgeNodes = hbridgeElement.SelectNodes("HBridge");
+            var hbridgeNodes = hbridgeElement.SelectNodes("HBridgeMotor");
             foreach (XmlNode nextHBridge in hbridgeNodes)
             {
-                /*
-                <HBridge>
-                   <Polarity>608,610,609</Polarity>    
-                   <Joystick direction="1">RightStickUp</Joystick>    //  Joystick optional
-                   <Joystick direction="-1">RightStickDown</Joystick>
-               </HBridge>
-               */
-
                 HBridgeWrapper newHBridge = null;
                 XmlNode byNameNode = nextHBridge.SelectSingleNode("ByName");
                 if (byNameNode == null)
@@ -390,7 +382,6 @@ namespace GpioJoy
 
                 if (newHBridge != null)
                 {
-                   
                     //  Map to joystick input
                     //  <Joystick>
                     XmlNodeList joystickNodes = nextHBridge.SelectNodes("Joystick");
@@ -617,10 +608,17 @@ namespace GpioJoy
                 //  Load the assembly and call the setup functions if we need to
                 if ( ! LoadedAssemblies.ContainsKey(nameNode.InnerText) )
                 {
-                    var assembly = Assembly.LoadFrom(nameNode.InnerText);
-                    LoadedAssemblies.Add(nameNode.InnerText, assembly);
+                    try
+                    {
+                        var assembly = Assembly.LoadFrom(nameNode.InnerText);
+                        LoadedAssemblies.Add(nameNode.InnerText, assembly);
 
-                    CallSetupMethods(nextAssembly, assembly);
+                        CallSetupMethods(nextAssembly, assembly);
+                    }
+                    catch ( Exception e)
+                    {
+                        Console.WriteLine($"Unable to load assembly {nameNode.InnerText}:  {e}");
+                    }
                 }
             }
         }
@@ -680,17 +678,22 @@ namespace GpioJoy
                     XmlElement methodElement = (XmlElement)nextFunction.SelectSingleNode("Method");
                     if (methodElement == null)
                         continue;
-                    
+
+                    string fnName = "";
+                    XmlElement nameElement = (XmlElement)nextFunction.SelectSingleNode("Name");
+                    if (nameElement != null)
+                        fnName = nameElement.InnerText;
+
                     var assemblyName = methodElement.Attributes["assembly"]?.InnerText;
                     var className = methodElement.Attributes["class"]?.InnerText;
 
-                    if ( assemblyName !=  null && className != null && LoadedAssemblies.ContainsKey(assemblyName) )
+                    if (assemblyName != null && className != null && LoadedAssemblies.ContainsKey(assemblyName))
                     {
                         var assembly = LoadedAssemblies[assemblyName];
                         var type = assembly.GetType(className);
                         var method = type.GetMethod(methodElement.InnerText);
 
-                        if ( method != null )
+                        if (method != null)
                         {
                             XmlNodeList joystickNodes = nextFunction.SelectNodes("Joystick");
                             if (joystickNodes == null)
@@ -699,9 +702,13 @@ namespace GpioJoy
                             {
                                 var assignment = (JoystickControl)Enum.Parse(typeof(JoystickControl), nextJsNode.InnerText);
 
-                                jsManager.AddFunctionAssignment(configName, form, assignment, method);
+                                jsManager.AddFunctionAssignment(configName, fnName, form, assignment, method);
                             }
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Unable to load method {methodElement.InnerText}");
                     }
                 }
                 catch (Exception)

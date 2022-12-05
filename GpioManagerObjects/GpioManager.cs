@@ -77,8 +77,23 @@ namespace GpioManagerObjects
         {
             if (RunningPlatform() == Platform.Windows)
             {
+                if (McpChips.ContainsKey(baseNumber))
+                {
+                    if (McpChips[baseNumber] == address)
+                        return 1;
+                    else
+                        return -1;
+                }
+                McpChips.Add(baseNumber, address);
                 return 1;
+            }
 
+            if (McpChips.ContainsKey(baseNumber) )
+            {
+                if (McpChips[baseNumber] == address)
+                    return ExtensionNodeManagement.WiringGpioGetFileDescriptorForNode(baseNumber);
+                else
+                    return -1;
             }
 
             switch (type)
@@ -86,16 +101,16 @@ namespace GpioManagerObjects
                 case Mcp230xxType.Mcp23008:
                     {
                         int fd = DeviceI2CExtensions.Mcp23008Setup(I2CBus, baseNumber, address);
-                        for (int i = baseNumber; i < baseNumber + 8; i++)
-                            McpPins[i] = fd;
+                        if (fd >= 0)
+                            McpChips.Add(baseNumber, address);
                         return fd;
                     }
 
                 case Mcp230xxType.Mcp23017:
                     {
                         int fd = DeviceI2CExtensions.Mcp23017Setup(I2CBus, baseNumber, address);
-                        for (int i = baseNumber; i < baseNumber + 16; i++)
-                            McpPins[i] = fd;
+                        if (fd >= 0)
+                            McpChips.Add(baseNumber, address);
                         return fd;
                     }
 
@@ -117,27 +132,46 @@ namespace GpioManagerObjects
         {
             if (RunningPlatform() == Platform.Windows)
             {
+                if (PcaChips.ContainsKey(baseNumber))
+                {
+                    if (PcaChips[baseNumber] == address)
+                        return 1;
+                    else
+                        return -1;
+                }
+                PcaChips.Add(baseNumber, address);
                 return 1;
             }
 
-            int fd = DeviceI2CExtensions.Pca9685Setup(1, baseNumber, address, frequency);
-            for (int i = baseNumber; i < baseNumber + 16; i++)
+            if (PcaChips.ContainsKey(baseNumber))
             {
-                PcaPins[i] = new PcaChip(fd, frequency);
+                if (PcaChips[baseNumber] == address)
+                    return ExtensionNodeManagement.WiringGpioGetFileDescriptorForNode(baseNumber);
+                else
+                    return -1;
             }
-            DeviceI2CExtensions.Pca9685PWMReset(fd);
+
+            int fd = DeviceI2CExtensions.Pca9685Setup(1, baseNumber, address, frequency);
+            if (fd >= 0)
+            {
+                PcaChips.Add(baseNumber, address);
+                DeviceI2CExtensions.Pca9685PWMReset(fd);
+            }
             return fd;
         }
 
 
         /// <summary>
-        /// Query if a pin is PCA chip pin
+        /// Convenience function to tell if a pin is a PCA pin
         /// </summary>
-        /// <param name="pinNumber">pin number</param>
-        /// <returns>true if is PCA chip pin</returns>
-        public bool IsPcaPin(int pinNumber)
+        public bool IsPcaPin(int pin)
         {
-            return PcaPins.ContainsKey(pinNumber);
+            foreach ( var nextPinBase in PcaChips )
+            {
+                if (pin - nextPinBase.Key >= 0 && pin - nextPinBase.Key < 16)
+                    return true;
+            }
+            return false;
         }
 
         
@@ -151,20 +185,22 @@ namespace GpioManagerObjects
             if (!Pins.ContainsKey(pinNumber))
                 return 0.0;
 
-            if (PcaPins.ContainsKey(pinNumber))
-            {
-                return PcaPins[pinNumber].Frequency;
-            }
-            else if (pinNumber == 12)
-            {
-                //  program is hard coded to use 50 Hz on RPi PWM pin
-                return 50.0;
-            }
-            else
-            {
-                //  software PWM
-                return 1.0 / (Pins[pinNumber].PwmRange * 0.000100);
-            }
+            //if (PcaPins.ContainsKey(pinNumber))
+            //{
+            //    return PcaPins[pinNumber].Frequency;
+            //}
+            //else if (pinNumber == 12)
+            //{
+            //    //  program is hard coded to use 50 Hz on RPi PWM pin
+            //    return 50.0;
+            //}
+            //else
+            //{
+            //    //  software PWM
+            //    return 1.0 / (Pins[pinNumber].PwmRange * 0.000100);
+            //}
+
+            return 50;  //  TODO call the library
         }
 
 
@@ -256,7 +292,7 @@ namespace GpioManagerObjects
                 }
 
                 //  process the polarity pins
-                var polarities = stepperElement.SelectNodes("Polarity");
+                var polarities = stepperElement.SelectNodes("HBridge");
                 foreach (var nextPolarity in polarities)
                 {
                     var polarityElement = (XmlElement)nextPolarity;
@@ -620,7 +656,7 @@ namespace GpioManagerObjects
             List<int> polaritiesList = new List<int>();
 
             //  process the polarity pins
-            var polarityNode = hbridgeElement.SelectSingleNode("Polarity");
+            var polarityNode = hbridgeElement.SelectSingleNode("HBridge");
             if (polarityNode == null)
                 return null;
 
@@ -1142,8 +1178,8 @@ namespace GpioManagerObjects
 
 
 
-        protected Dictionary<int, int> McpPins = new Dictionary<int, int>();
-        protected Dictionary<int, PcaChip> PcaPins = new Dictionary<int, PcaChip>();
+        protected Dictionary<int, int> McpChips = new Dictionary<int, int>();
+        protected Dictionary<int, int> PcaChips = new Dictionary<int, int>();
 
         //  Pins Dictionary
         Dictionary<int, GpioPinWrapper> Pins;

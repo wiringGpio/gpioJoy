@@ -12,36 +12,50 @@ namespace GpioJoy
     public partial class JoystickManager
     {
 
-        //  function to toggle the configuration to the next one, used by all configurations
+        /// <summary>
+        /// Go to the 'home' configuration page (first one loaded)
+        /// </summary>
         public void ConfigurationPageGoHome(bool input)
         {
-            var tickNow = System.Environment.TickCount;
-            if (input )
+            if (input && Environment.TickCount - GoHomeChangeTick > 1000)
             {
                 HomeConfiguration();
                 OnStateChanged?.Invoke(this, new EventArgs());
+                GoHomeChangeTick= Environment.TickCount;
             }
         }
+        int GoHomeChangeTick = 0;
 
+
+        /// <summary>
+        /// Go forward one configuration page
+        /// </summary>
         public void ConfigurationPageGoBack(bool input)
         {
-            var tickNow = System.Environment.TickCount;
-            if (input )
+            if (input && Environment.TickCount - GoBackChangeTick > 1000)
             {
                 ToggleConfiguration(-1);
                 OnStateChanged?.Invoke(this, new EventArgs());
+                GoBackChangeTick= Environment.TickCount;
             }
         }
+        int GoBackChangeTick = 0;
 
+
+
+        /// <summary>
+        /// Go back one configuration page
+        /// </summary>
         public void ConfigurationPageGoForward(bool input)
         {
-            var tickNow = System.Environment.TickCount;
-            if (input )
+            if (input && Environment.TickCount - GoForwardChangeTick > 1000)
             {
                 ToggleConfiguration(1);
                 OnStateChanged?.Invoke(this, new EventArgs());
+                GoForwardChangeTick= Environment.TickCount;
             }
         }
+        int GoForwardChangeTick = 0;
 
 
 

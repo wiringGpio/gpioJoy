@@ -45,27 +45,16 @@ namespace GpioJoy
             JsManager = jsManager;
 
             JsManager.OnStateChanged += JsManager_StateChanged;
-            
-            string configFilePath = "";
-            if (PlatformHelper.PlatformHelper.RunningPlatform() == PlatformHelper.Platform.Linux)
-                configFilePath = "/home/pi/GpioJoy/Config/";
-            else
-                configFilePath = "./Config/";
-
-         
-            var configFiles = Directory.GetFiles(configFilePath, "*.xml", SearchOption.AllDirectories);
-
+           
+            var configFiles = Directory.GetFiles("./Config/", "*.xml", SearchOption.AllDirectories);
             foreach (var nextFile in configFiles)
             {
-                InitLabels();
-                JsManager.SetControlLabels();
-               
-
                 LoadConfiguration.LoadConfigFile(Path.Combine( nextFile), this, PinManager, JsManager);
-
-                labelConfigFile.Text = JsManager.ConfigName;
             }
-         
+            InitLabels();
+            JsManager.SetControlLabels();
+            labelConfigFile.Text = JsManager.ConfigName;
+
             //  setup the UI to use the pin manager
             gpioTab.InitializeGpioTab(PinManager);
 

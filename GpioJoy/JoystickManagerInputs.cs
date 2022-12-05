@@ -72,12 +72,7 @@ namespace GpioJoy
                 UiControl.MouseUp += UiControl_MouseUp;
                 UiControl.MouseDown += UiControl_MouseDown;
             }
-         
-
         }
-
-       
-
 
         //  function to process vector (stick/trigger) input
         public virtual void ProcessInput(double input, bool updateUi) { return; }
@@ -88,10 +83,6 @@ namespace GpioJoy
         public virtual void UiControl_MouseUp(object sender, MouseEventArgs e) { return;  }
 
         public virtual void UiControl_MouseDown(object sender, MouseEventArgs e) { return; }
-
-      
-
-      
 
         //  flag if is enabled
         public bool Enabled { get; set; }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33122.133
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioJoy", "GpioJoy\GpioJoy.csproj", "{6664FF0B-7D17-4E5B-B90B-B568E4DF6865}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpioManagerObjects", "GpioManagerObjects\GpioManagerObjects.csproj", "{3F9223F4-AE39-4A30-A6C5-A5997ABC554A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wiringGpioExtensions-NFW4", "wiringGpioExtensions\wiringGpioExtensions-NFW4.csproj", "{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyUserFunctions", "MyUserFunctions\MyUserFunctions.csproj", "{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +139,30 @@ Global
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
 		{CE36E943-F4F4-46C6-B6DC-C63968CAB19E}.ReleaseJet|x86.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Debug|x86.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|Any CPU.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|Any CPU.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|x86.ActiveCfg = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.DebugJet|x86.Build.0 = Debug|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|x86.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.Release|x86.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|Any CPU.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|Any CPU.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|Mixed Platforms.Build.0 = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|x86.ActiveCfg = Release|Any CPU
+		{0584A05E-679F-4CF4-B9A6-B873F8CF0ACF}.ReleaseJet|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

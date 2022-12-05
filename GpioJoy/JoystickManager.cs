@@ -11,16 +11,21 @@ namespace GpioJoy
 {
     public class FunctionAssignmentContainer
     {
-        public FunctionAssignmentContainer(MethodInfo method, JoystickManager jsManager)
+        public FunctionAssignmentContainer(string name, MethodInfo method, JoystickManager jsManager)
         {
             Method = method;
             ActiveConfiguration = false;
             JsManager = jsManager;
+            Name = name;
         }
 
         public MethodInfo Method;
         public bool ActiveConfiguration;
         public JoystickManager JsManager;
+        public string Name { get; protected set; }
+
+        public virtual Control UiControl { get; }
+        public virtual Control UiLabel { get;  }
 
         public virtual void HandleMouseDown(object sender, MouseEventArgs e)
         {
@@ -30,18 +35,31 @@ namespace GpioJoy
         {
             return;
         }
+
+        public void SetupControlUi()
+        {
+            if (UiLabel != null)
+                UiLabel.Text = Name;
+            if (UiControl != null)
+                UiControl.Enabled = true;
+        }
     }
 
     public class FunctionButtonAssignmentContainer : FunctionAssignmentContainer
     {
-        public FunctionButtonAssignmentContainer(MethodInfo method, Button control, JoystickManager jsManager) : base(method, jsManager)
+        public FunctionButtonAssignmentContainer(string name, MethodInfo method,  Button control, JoystickManager jsManager) : base(name, method, jsManager)
         {
             if ( control != null )
             {
                 control.MouseUp += HandleMouseUp;
                 control.MouseDown += HandleMouseDown;
             }
+            _buttonControl = control;
         }
+
+        Button _buttonControl;
+        public override Control UiControl => _buttonControl;
+        public override Control UiLabel => _buttonControl;
 
 
         public override void HandleMouseDown(object sender, MouseEventArgs e)
@@ -58,20 +76,22 @@ namespace GpioJoy
 
     public class FunctionStickAssignmentContainer : FunctionAssignmentContainer
     {
-        public FunctionStickAssignmentContainer(MethodInfo method, TrackBar control, JoystickManager jsManager) : base(method, jsManager)
+        public FunctionStickAssignmentContainer(string name, MethodInfo method, Control label, TrackBar control, JoystickManager jsManager) : base(name, method, jsManager)
         {
-            Control = control;
-            Control.MouseUp += HandleMouseUp;
+            _trackBarControl = control;
+            _uiLabel = label;
+            _trackBarControl.MouseUp += HandleMouseUp;
         }
 
-        TrackBar Control;
+        TrackBar _trackBarControl;
+        Control _uiLabel;
+        public override Control UiControl => _trackBarControl;
+        public override Control UiLabel => _uiLabel;
 
-
-       
         public override void HandleMouseUp(object sender, MouseEventArgs e)
         {
             if (ActiveConfiguration)
-                Method.Invoke(JsManager, new object[] { (double)Control.Value/(double)Control.Maximum });
+                Method.Invoke(JsManager, new object[] { (double)_trackBarControl.Value/(double)_trackBarControl.Maximum });
         }
     }
 
@@ -227,6 +247,16 @@ namespace GpioJoy
         /// </summary>
         public void SetControlLabels()
         {
+            if ( CurrentFunctionAssignments != null )
+            {
+                foreach (var nextFunctionList in CurrentFunctionAssignments)
+                {
+                    foreach ( var nextFunction in nextFunctionList.Value)
+                    {
+                        nextFunction.SetupControlUi();
+                    }
+                }
+            }
             if (CurrentControlAssignments != null)
             {
                 foreach (var nextControl in CurrentControlAssignments)
@@ -837,7 +867,7 @@ namespace GpioJoy
         }
 
 
-        public void AddFunctionAssignment(string configName, MainForm form, JoystickControl assignment, MethodInfo method)
+        public void AddFunctionAssignment(string configName, string fnName, MainForm form, JoystickControl assignment, MethodInfo method)
         {
             if (!FunctionAssignments[configName].ContainsKey(assignment))
             {
@@ -858,7 +888,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickRight:
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
-                    newContainer = new FunctionStickAssignmentContainer(method, form.GetControlForStickAssignment(assignment), this);
+                    newContainer = new FunctionStickAssignmentContainer(fnName, method, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), this);
                     break;
                 //
                 case JoystickControl.ABtn:
@@ -876,7 +906,7 @@ namespace GpioJoy
                 case JoystickControl.DpadDown:
                 case JoystickControl.DpadLeft:
                 case JoystickControl.DpadRight:
-                    newContainer = new FunctionButtonAssignmentContainer(method, form.GetControlForButtonAssignment(assignment), this);
+                    newContainer = new FunctionButtonAssignmentContainer(fnName, method, form.GetControlForButtonAssignment(assignment), this);
                     break;
             }
 
