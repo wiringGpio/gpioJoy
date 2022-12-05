@@ -41,8 +41,8 @@ namespace GpioJoy
                 var pcasElement = root.SelectSingleNode("PCAs");
                 LoadPcas(pcasElement, form, pinManager, jsManager);
 
-                //  Get the root node for our control pins
-                //  <ControlPins>
+                //  Get the root node for our pin mode settings
+                //  <PinModes>
                 var controlPinsNode = root.SelectSingleNode("PinModes");
                 LoadPinModes(configName, controlPinsNode, form, pinManager, jsManager);
 
@@ -187,27 +187,6 @@ namespace GpioJoy
         /// </summary>
         public static void LoadPinModes(string configName, XmlNode controlPinsNode, MainForm form, GpioManager pinManager, JoystickManager jsManager)
         {
-            //  Parse This
-            /*
-             
-            <Pin>
-                <Name>SomeName</Name>
-                <Number>206</Number>
-                <Mode>Output</Mode>
-                <Joystick>ABtn</Joystick>
-              </Pin>
-                
-            or this
-
-            <Pin>
-                <Number>207</Number>
-                <Mode>PWMOutput</Mode>
-                <Joystick scale="0.5" reverse="true">LeftTrigger</Joystick>     //  PWM joystick vector can have optional scale and reversed attributes
-              </Pin>
-             
-            //  see ./Config/GpioConfig.xml for more examples and options
-             */
-
             if (controlPinsNode == null)
                 return;
 
@@ -305,7 +284,6 @@ namespace GpioJoy
                 XmlNodeList joystickNodes = nextPin.SelectNodes("Joystick");
                 if (joystickNodes != null)
                 {
-
                     JoystickControl assignment;
                     try
                     {

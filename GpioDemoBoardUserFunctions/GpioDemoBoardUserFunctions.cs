@@ -1019,9 +1019,7 @@ namespace GpioDemoBoardUserFunctions
         static int LeftBumperChangeTick = 0;
         static int RightBumperChangeTick = 0;
 
-        static int BackBtnChangeTick = 0;
-        static int StartBtnChangeTick = 0;
-        static int HomeBtnChangeTick = 0;
+        
         static int DpadUpChangeTick = 0;
         static int DpadDownChangeTick = 0;
         static int DpadLeftChangeTick = 0;
