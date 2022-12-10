@@ -17,21 +17,19 @@ namespace GpioJoy
         public JoystickTab()
         {
             InitializeComponent();
-
-
-            
         }
 
         JoystickManager _jsManager;
 
         public bool JoyStickConnected { get { return _jsManager.Joystick.IsConnected; } }
         
+        /// <summary>
+        /// Initialize the available controllers combo box
+        /// </summary>
         public void InitializeJoystickTab(JoystickManager jsManager)
         {
-
             _jsManager = jsManager;
 
-            // Hook up Joystick events
             //  Init Joystick Control
             if (PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
             {
@@ -50,12 +48,23 @@ namespace GpioJoy
 
             //  setup the joystick disconnect message
             _jsManager.Joystick.JoystickDisconnectHandler += Joystick_JoystickDisconnectHandler;
+
+            if ( Properties.Settings.Default.ControllerPath.Length > 0 )
+            {
+                if (comboBoxJoystickPaths.Items.Contains(Properties.Settings.Default.ControllerPath))
+                {
+                    comboBoxJoystickPaths.SelectedItem = Properties.Settings.Default.ControllerPath;
+                    ConnectToController();
+                }
+            }
         }
 
         static string NoneFound = "none found";
 
 
-        //  Joystick
+        /// <summary>
+        /// Refresh controller paths
+        /// </summary>
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
             comboBoxJoystickPaths.Items.Clear();
@@ -69,11 +78,18 @@ namespace GpioJoy
 
 
         /// <summary>
-        /// Check Use Joystick handler
+        /// Connect to controller button handler
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void buttonConnectJoystick_Click(object sender, EventArgs e)
+        {
+            ConnectToController();
+        }
+
+
+        /// <summary>
+        /// Connect to controller
+        /// </summary>
+        private void ConnectToController()
         {
             string selectedPath = "";
             if (!_jsManager.Joystick.IsConnected && PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
@@ -88,8 +104,11 @@ namespace GpioJoy
             buttonConnectJoystick.Enabled = false;
             backgroundWorkerConnectJoystick.RunWorkerAsync(selectedPath);
         }
-        //
-        //  Background worker for connect to joystick
+
+        
+        /// <summary>
+        /// Connect to controller background worker
+        /// </summary>
         private void backgroundWorkerConnectJoystick_DoWork(object sender, DoWorkEventArgs e)
         {
             if (_jsManager.Joystick.IsConnected)
@@ -100,7 +119,7 @@ namespace GpioJoy
             else
             {
                 if (PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
-                    e.Result = _jsManager.Joystick.ConnectToJoystick(JoystickType.XBox, "/dev/input/" + e.Argument);     //  TODO - from UI on this page
+                    e.Result = _jsManager.Joystick.ConnectToJoystick(JoystickType.XBox, "/dev/input/" + e.Argument);     
 
             }
         }
@@ -116,20 +135,17 @@ namespace GpioJoy
 
             if (_jsManager.Joystick.IsConnected)
             {
-                //  control fo PC build using wiimote - you can't reconnect so hide the control
-                if (_jsManager.Joystick.IsConnected && PlatformHelper.PlatformHelper.RunningPlatform() == PlatformHelper.Platform.Windows)
-                    buttonConnectJoystick.Visible = false;
-                else
-                    buttonConnectJoystick.Visible = true;
-
                 buttonConnectJoystick.Text = "Disconnect";
-                comboBoxJoystickPaths.Visible = false;
+                comboBoxJoystickPaths.Enabled = false;
                 buttonRefresh.Visible = false;
+
+                Properties.Settings.Default.ControllerPath = (string)comboBoxJoystickPaths.SelectedItem;
+                Properties.Settings.Default.Save();
 
             }
             else
             {
-                comboBoxJoystickPaths.Visible = true;
+                comboBoxJoystickPaths.Enabled = true;
                 buttonRefresh.Visible = true;
                 buttonConnectJoystick.Text = "Connect";
 
