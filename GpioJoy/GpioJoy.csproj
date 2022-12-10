@@ -55,6 +55,12 @@
   <ItemGroup>
     <Compile Include="JoystickManagerInputs.cs" />
     <Compile Include="JoystickManagerUserFunctions.cs" />
+    <Compile Include="JoystickTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JoystickTab.Designer.cs">
+      <DependentUpon>JoystickTab.cs</DependentUpon>
+    </Compile>
     <Compile Include="PinWrapperJs.cs" />
     <Compile Include="GpioTab.cs">
       <SubType>UserControl</SubType>
@@ -74,6 +80,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GpioTab.resx">
       <DependentUpon>GpioTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JoystickTab.resx">
+      <DependentUpon>JoystickTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

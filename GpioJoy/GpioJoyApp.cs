@@ -37,6 +37,9 @@ namespace GpioJoy
 
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm(_jsManager, _pinManager)); ;
+
+            _jsManager.ShutDown();
+            _pinManager.ShutDown();
         }
     }
 }

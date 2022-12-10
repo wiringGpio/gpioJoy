@@ -22,60 +22,47 @@ namespace GpioJoy
             //  Winform initialization function
             InitializeComponent();
 
-            // Hook up Joystick events
-               //  Init Joystick Control
-            if (PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
-            {
-                List<string> paths = SimpleJoystick.GetJoystickPaths();
-                foreach (var nextPath in paths)
-                    comboBoxJoystickPaths.Items.Add(nextPath);
-                if (paths.Count == 0)
-                    comboBoxJoystickPaths.Items.Add(NoneFound);
-                comboBoxJoystickPaths.SelectedIndex = 0;
-            }
-            else
-            {
-                comboBoxJoystickPaths.Visible = false;
-                buttonRefresh.Visible = false;
-            }
+            _pinManager = pinManager;
+            gpioTab.InitializeGpioTab(_pinManager);
+            
+            _jsManager = jsManager;
+            _jsManager.OnStateChanged += JsManager_StateChanged;
+            joystickTab1.InitializeJoystickTab(_jsManager);
 
-
-            //  instantiate the Pin Manager
-            PinManager = pinManager;
-            JsManager = jsManager;
-
-            JsManager.OnStateChanged += JsManager_StateChanged;
-           
             var configFiles = Directory.GetFiles("./Config/", "*.xml", SearchOption.AllDirectories);
             foreach (var nextFile in configFiles)
             {
-                LoadConfiguration.LoadConfigFile(Path.Combine( nextFile), this, PinManager, JsManager);
+                LoadConfiguration.LoadConfigFile(Path.Combine( nextFile), this, _pinManager, _jsManager);
             }
+            
             InitLabels();
-            JsManager.SetControlLabels();
-            labelConfigFile.Text = JsManager.ConfigName;
-
-            //  setup the UI to use the pin manager
-            gpioTab.InitializeGpioTab(PinManager);
-
-            //  setup the joystick disconnect message
-            JsManager.Joystick.JoystickDisconnectHandler += Joystick_JoystickDisconnectHandler;
+            _jsManager.SetControlLabels();
+            
+            labelConfigFile.Text = _jsManager.ConfigName;
         }
 
+        //  The GPIO Pin Manager
+        GpioManager _pinManager;
+        //  The Joystick
+        JoystickManager _jsManager;
 
 
+        /// <summary>
+        /// Joystick state changed, update the control labels
+        /// </summary>
         private void JsManager_StateChanged(object sender, EventArgs e)
         {
-            
-            this.Invoke((MethodInvoker)delegate {
+            Invoke((MethodInvoker)delegate {
                 InitLabels();
-                JsManager.SetControlLabels();
-                labelConfigFile.Text = JsManager.ConfigName; 
+                _jsManager.SetControlLabels();
+                labelConfigFile.Text = _jsManager.ConfigName; 
             });
-
-          
         }
 
+
+        /// <summary>
+        /// Initialize labels
+        /// </summary>
         public void InitLabels()
         {
 
@@ -133,6 +120,10 @@ namespace GpioJoy
             buttonDPR.Text = "";
         }
 
+
+        /// <summary>
+        /// Get the track bar control for the control joystick asssignment
+        /// </summary>
         public TrackBar GetControlForStickAssignment(JoystickControl assignment)
         {
             switch (assignment)
@@ -164,6 +155,9 @@ namespace GpioJoy
         }
 
 
+        /// <summary>
+        /// Get the button control for the control button assignment
+        /// </summary>
         public Button GetControlForButtonAssignment(JoystickControl assignment)
         {
             switch (assignment)
@@ -206,7 +200,9 @@ namespace GpioJoy
         }
 
 
-
+        /// <summary>
+        /// Get the label control for the control joystick assignment 
+        /// </summary>
         public Control GetLabelForStickAssignment(JoystickControl assignment)
         {
             switch (assignment)
@@ -265,248 +261,5 @@ namespace GpioJoy
                     return null;
             }
         }
-
-        /// <summary>
-        /// Shut down Robot on main form closing
-        /// </summary>
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-            PinManager.ShutDown();
-            JsManager.ShutDown();
-
-            
-        }
-
-
-        //  The GPIO Pin Manager
-        public GpioManager PinManager { get; protected set; }
-
-
-        //  The Joystick
-        public JoystickManager JsManager { get; protected set; }
-          //
-        public bool JoyStickConnected { get { return JsManager.Joystick.IsConnected; } }
-        static string NoneFound = "none found";
-
-        /// <summary>
-        /// Keyboard Input Handling 
-        /// pass keyboard key presses along to the robot
-        /// </summary>
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
-        {
-          
-            //switch ( (ConsoleKey) e.KeyValue )
-            //{
-                    
-            //    case ConsoleKey.UpArrow:
-            //        PwmPower += 10;
-            //        if (PwmPower > 100)
-            //            PwmPower = 100;
-            //        testPin.PwmSetValue(PwmPower);
-            //        break;
-
-            //    case ConsoleKey.DownArrow:
-            //        PwmPower -= 10;
-            //        if (PwmPower < 0)
-            //            PwmPower = 0;
-            //        testPin.PwmSetValue(PwmPower);
-            //        break;
-
-            //    //case ConsoleKey.RightArrow:
-            //    //    PwmPower2 += 3;
-            //    //    if (PwmPower2 > 30)
-            //    //        PwmPower2 = 30;
-            //    //    test2.SetPwmPower(PwmPower2);
-            //    //    break;
-
-            //    //case ConsoleKey.LeftArrow:
-            //    //    PwmPower2 -= 3;
-            //    //    if (PwmPower2 < 0)
-            //    //        PwmPower2 = 0;
-            //    //    test2.SetPwmPower(PwmPower2);
-            //    //    break;
-
-            //    //case ConsoleKey.Q:
-            //    //    PwmPower3 += 3;
-            //    //    if (PwmPower3 > 30)
-            //    //        PwmPower3 = 30;
-            //    //    test3.SetPwmPower(PwmPower3);
-            //    //    break;
-
-            //    //case ConsoleKey.A:
-            //    //    PwmPower3 -= 3;
-            //    //    if (PwmPower3 < 0)
-            //    //        PwmPower3 = 0;
-            //    //    test3.SetPwmPower(PwmPower3);
-            //    //    break;
-                     
-            //}
-        }
-
-
-        //  Joystick
-        private void buttonRefresh_Click(object sender, EventArgs e)
-        {
-            comboBoxJoystickPaths.Items.Clear();
-
-            List<string> paths = SimpleJoystick.GetJoystickPaths();
-            foreach (var nextPath in paths)
-                comboBoxJoystickPaths.Items.Add(nextPath);
-            if (paths.Count == 0)
-                comboBoxJoystickPaths.Items.Add(NoneFound);
-        }
-
-
-        /// <summary>
-        /// Check Use Joystick handler
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void buttonConnectJoystick_Click(object sender, EventArgs e)
-        {
-            string selectedPath = "";
-            if (!JsManager.Joystick.IsConnected && PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
-            {
-                selectedPath = (string)comboBoxJoystickPaths.SelectedItem;
-                if (selectedPath == null || selectedPath.Length == 0 || selectedPath == NoneFound)
-                {
-                    MessageBox.Show("Please select a path for the joystick!", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-            buttonConnectJoystick.Enabled = false;
-            backgroundWorkerConnectJoystick.RunWorkerAsync(selectedPath);
-        }
-        //
-        //  Background worker for connect to joystick
-        private void backgroundWorkerConnectJoystick_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (JsManager.Joystick.IsConnected)
-            {
-                e.Result = true;
-                JsManager.Joystick.Disconnect();
-            }
-            else
-            {
-                if (PlatformHelper.PlatformHelper.RunningPlatform() == Platform.Linux)
-                    e.Result = JsManager.Joystick.ConnectToJoystick(JoystickType.XBox, "/dev/input/" + e.Argument);     //  TODO - from UI on this page
-               
-            }
-        }
-        //
-        private void backgroundWorkerConnectJoystick_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if ((bool)e.Result != true)
-            {
-                MessageBox.Show("Failed to connect to Joystick !", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            buttonConnectJoystick.Enabled = true;
-
-            if (JsManager.Joystick.IsConnected)
-            {
-                //  control fo PC build using wiimote - you can't reconnect so hide the control
-                if (JsManager.Joystick.IsConnected && PlatformHelper.PlatformHelper.RunningPlatform() == PlatformHelper.Platform.Windows)
-                    buttonConnectJoystick.Visible = false;
-                else
-                    buttonConnectJoystick.Visible = true;
-
-                buttonConnectJoystick.Text = "Disconnect";
-                comboBoxJoystickPaths.Visible = false;
-                buttonRefresh.Visible = false;
-              
-            }
-            else
-            {
-                comboBoxJoystickPaths.Visible = true;
-                buttonRefresh.Visible = true;
-                buttonConnectJoystick.Text = "Connect";
-               
-            }
-        }
-
-
-        private void Joystick_JoystickDisconnectHandler(object sender, EventArgs e)
-        {
-            //  TODO
-        }
-
-        private void buttonDPL_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonDPR_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonBack_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-
-
-
-
-
-
-        //// Joystick control of UI
-        ////
-        //long timeSinceTabSwitch = 0;
-        //long timeSinceDpadSwitch = 0;
-        //long timeSinceYBtn = 0;
-
-        ///// <summary>
-        ///// Joystick UI Control
-        ///// </summary>
-        //void JoystickUserInterfaceControls(SimpleJoy.XBoxJoystickEventArgs e)
-        //{
-        //    long tickCount = Environment.TickCount;
-
-        //    //  Back and Start Button cycle tab pages
-        //    if ((e.Data.StartBtn || e.Data.BackBtn) && (tickCount - timeSinceTabSwitch > 200))
-        //    {
-        //        timeSinceTabSwitch = tickCount;
-
-        //        int newIndex = tabControlRobot.SelectedIndex + (e.Data.StartBtn ? 1 : -1);
-        //        if (newIndex == tabControlRobot.TabPages.Count)
-        //            newIndex = 0;
-        //        else if (newIndex == -1)
-        //            newIndex = tabControlRobot.TabPages.Count - 1;
-
-        //        this.BeginInvoke(new MethodInvoker(delegate()
-        //        {
-        //            tabControlRobot.SelectedIndex = newIndex;
-        //        }));
-        //    }
-
-        //    //  DPad selects from program tab (when program tab is visible)
-        //    if (e.Data.Dpad && (tickCount - timeSinceDpadSwitch > 200))
-        //    {
-        //        timeSinceDpadSwitch = tickCount;
-
-
-        //    }
-
-        //    //  home button changes driving mode
-        //    if (e.Data.YBtn && (tickCount - timeSinceYBtn > 1000))
-        //    {
-        //        timeSinceYBtn = tickCount;
-
-
-        //    }
-        //}
-
-
-
-
-
-
-
     }
 }

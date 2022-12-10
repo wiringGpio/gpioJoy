@@ -67,15 +67,13 @@
             this.trackBarLSR = new System.Windows.Forms.TrackBar();
             this.trackBarLSD = new System.Windows.Forms.TrackBar();
             this.trackBarLSU = new System.Windows.Forms.TrackBar();
-            this.groupBoxJoystick = new System.Windows.Forms.GroupBox();
-            this.buttonRefresh = new System.Windows.Forms.Button();
-            this.buttonConnectJoystick = new System.Windows.Forms.Button();
-            this.comboBoxJoystickPaths = new System.Windows.Forms.ComboBox();
             this.tabPageGpio = new System.Windows.Forms.TabPage();
             this.gpioTab = new GpioJoy.GpioTab();
+            this.tabPageJoy = new System.Windows.Forms.TabPage();
+            this.joystickTab1 = new GpioJoy.JoystickTab();
             this.backgroundWorkerDisconnect = new System.ComponentModel.BackgroundWorker();
-            this.backgroundWorkerConnectJoystick = new System.ComponentModel.BackgroundWorker();
             this.gpioTab1 = new GpioJoy.GpioTab();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.tabControlRobot.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRT)).BeginInit();
@@ -88,8 +86,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSU)).BeginInit();
-            this.groupBoxJoystick.SuspendLayout();
             this.tabPageGpio.SuspendLayout();
+            this.tabPageJoy.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlRobot
@@ -99,6 +97,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlRobot.Controls.Add(this.tabPageRobot);
             this.tabControlRobot.Controls.Add(this.tabPageGpio);
+            this.tabControlRobot.Controls.Add(this.tabPageJoy);
             this.tabControlRobot.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControlRobot.Location = new System.Drawing.Point(12, 12);
             this.tabControlRobot.Name = "tabControlRobot";
@@ -144,7 +143,6 @@
             this.tabPageRobot.Controls.Add(this.trackBarLSR);
             this.tabPageRobot.Controls.Add(this.trackBarLSD);
             this.tabPageRobot.Controls.Add(this.trackBarLSU);
-            this.tabPageRobot.Controls.Add(this.groupBoxJoystick);
             this.tabPageRobot.Location = new System.Drawing.Point(4, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
@@ -171,7 +169,6 @@
             this.buttonDPR.TabIndex = 60;
             this.buttonDPR.Text = ">";
             this.buttonDPR.UseVisualStyleBackColor = true;
-            this.buttonDPR.Click += new System.EventHandler(this.buttonDPL_Click);
             // 
             // buttonDPD
             // 
@@ -202,7 +199,6 @@
             this.buttonDPL.TabIndex = 57;
             this.buttonDPL.Text = "<";
             this.buttonDPL.UseVisualStyleBackColor = true;
-            this.buttonDPL.Click += new System.EventHandler(this.buttonDPR_Click);
             // 
             // buttonRS
             // 
@@ -444,7 +440,6 @@
             this.buttonBack.TabIndex = 32;
             this.buttonBack.Text = "Back";
             this.buttonBack.UseVisualStyleBackColor = true;
-            this.buttonBack.Click += new System.EventHandler(this.buttonBack_Click);
             // 
             // buttonLB
             // 
@@ -507,51 +502,6 @@
             this.trackBarLSU.TabIndex = 26;
             this.trackBarLSU.TickStyle = System.Windows.Forms.TickStyle.Both;
             // 
-            // groupBoxJoystick
-            // 
-            this.groupBoxJoystick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBoxJoystick.Controls.Add(this.buttonRefresh);
-            this.groupBoxJoystick.Controls.Add(this.buttonConnectJoystick);
-            this.groupBoxJoystick.Controls.Add(this.comboBoxJoystickPaths);
-            this.groupBoxJoystick.Location = new System.Drawing.Point(6, 412);
-            this.groupBoxJoystick.Name = "groupBoxJoystick";
-            this.groupBoxJoystick.Size = new System.Drawing.Size(276, 55);
-            this.groupBoxJoystick.TabIndex = 25;
-            this.groupBoxJoystick.TabStop = false;
-            this.groupBoxJoystick.Text = "Joystick";
-            // 
-            // buttonRefresh
-            // 
-            this.buttonRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonRefresh.Location = new System.Drawing.Point(102, 24);
-            this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(77, 24);
-            this.buttonRefresh.TabIndex = 19;
-            this.buttonRefresh.Text = "Refresh";
-            this.buttonRefresh.UseVisualStyleBackColor = true;
-            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
-            // 
-            // buttonConnectJoystick
-            // 
-            this.buttonConnectJoystick.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonConnectJoystick.Location = new System.Drawing.Point(185, 23);
-            this.buttonConnectJoystick.Name = "buttonConnectJoystick";
-            this.buttonConnectJoystick.Size = new System.Drawing.Size(77, 24);
-            this.buttonConnectJoystick.TabIndex = 0;
-            this.buttonConnectJoystick.Text = "Connect";
-            this.buttonConnectJoystick.UseVisualStyleBackColor = true;
-            this.buttonConnectJoystick.Click += new System.EventHandler(this.buttonConnectJoystick_Click);
-            // 
-            // comboBoxJoystickPaths
-            // 
-            this.comboBoxJoystickPaths.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxJoystickPaths.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBoxJoystickPaths.FormattingEnabled = true;
-            this.comboBoxJoystickPaths.Location = new System.Drawing.Point(4, 24);
-            this.comboBoxJoystickPaths.Name = "comboBoxJoystickPaths";
-            this.comboBoxJoystickPaths.Size = new System.Drawing.Size(92, 24);
-            this.comboBoxJoystickPaths.TabIndex = 18;
-            // 
             // tabPageGpio
             // 
             this.tabPageGpio.Controls.Add(this.gpioTab);
@@ -572,10 +522,24 @@
             this.gpioTab.TabIndex = 1;
             this.gpioTab.Tag = "22";
             // 
-            // backgroundWorkerConnectJoystick
+            // tabPageJoy
             // 
-            this.backgroundWorkerConnectJoystick.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerConnectJoystick_DoWork);
-            this.backgroundWorkerConnectJoystick.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerConnectJoystick_RunWorkerCompleted);
+            this.tabPageJoy.Controls.Add(this.joystickTab1);
+            this.tabPageJoy.Location = new System.Drawing.Point(4, 29);
+            this.tabPageJoy.Name = "tabPageJoy";
+            this.tabPageJoy.Size = new System.Drawing.Size(810, 473);
+            this.tabPageJoy.TabIndex = 5;
+            this.tabPageJoy.Text = "Joy";
+            this.tabPageJoy.UseVisualStyleBackColor = true;
+            // 
+            // joystickTab1
+            // 
+            this.joystickTab1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.joystickTab1.Location = new System.Drawing.Point(4, 5);
+            this.joystickTab1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.joystickTab1.Name = "joystickTab1";
+            this.joystickTab1.Size = new System.Drawing.Size(752, 408);
+            this.joystickTab1.TabIndex = 0;
             // 
             // gpioTab1
             // 
@@ -599,8 +563,6 @@
             this.MinimumSize = new System.Drawing.Size(844, 528);
             this.Name = "MainForm";
             this.Text = "GPIO Joy";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.tabControlRobot.ResumeLayout(false);
             this.tabPageRobot.ResumeLayout(false);
             this.tabPageRobot.PerformLayout();
@@ -614,8 +576,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLSU)).EndInit();
-            this.groupBoxJoystick.ResumeLayout(false);
             this.tabPageGpio.ResumeLayout(false);
+            this.tabPageJoy.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -626,11 +588,6 @@
         private System.Windows.Forms.TabControl tabControlRobot;
         private System.Windows.Forms.TabPage tabPageRobot;
         private System.ComponentModel.BackgroundWorker backgroundWorkerDisconnect;
-        private System.ComponentModel.BackgroundWorker backgroundWorkerConnectJoystick;
-        private System.Windows.Forms.GroupBox groupBoxJoystick;
-        private System.Windows.Forms.Button buttonRefresh;
-        private System.Windows.Forms.Button buttonConnectJoystick;
-        private System.Windows.Forms.ComboBox comboBoxJoystickPaths;
         private System.Windows.Forms.TabPage tabPageGpio;
         private GpioTab gpioTab1;
         private GpioTab gpioTab;
@@ -670,5 +627,8 @@
         private System.Windows.Forms.Button buttonRS;
         private System.Windows.Forms.Button buttonLS;
         private System.Windows.Forms.Label labelConfigFile;
+        private System.Windows.Forms.TabPage tabPageJoy;
+        private JoystickTab joystickTab1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
