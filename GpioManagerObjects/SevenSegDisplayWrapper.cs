@@ -9,10 +9,11 @@ namespace GpioManagerObjects
 {
     public class SevenSegDisplayWrapper
     {
-        public SevenSegDisplayWrapper(int displayIndex, List<GpioPinWrapper> pins)
+        public SevenSegDisplayWrapper(string name, int displayIndex, List<GpioPinWrapper> pins)
         {
             Pins = pins;
             DisplayIndex = displayIndex;
+            Name = name;
         }
 
         public void Set(string display)
@@ -33,5 +34,6 @@ namespace GpioManagerObjects
 
         public int DisplayIndex { get; protected set; }
         public List<GpioPinWrapper> Pins { get; protected set; }
+        public string Name { get; protected set; }
     }
 }

@@ -734,7 +734,7 @@
             this.radioButtonOut.Location = new System.Drawing.Point(10, 101);
             this.radioButtonOut.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.radioButtonOut.Name = "radioButtonOut";
-            this.radioButtonOut.Size = new System.Drawing.Size(73, 20);
+            this.radioButtonOut.Size = new System.Drawing.Size(74, 20);
             this.radioButtonOut.TabIndex = 43;
             this.radioButtonOut.TabStop = true;
             this.radioButtonOut.Text = "Output";
@@ -747,7 +747,7 @@
             this.radioButtonIn.Location = new System.Drawing.Point(10, 70);
             this.radioButtonIn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.radioButtonIn.Name = "radioButtonIn";
-            this.radioButtonIn.Size = new System.Drawing.Size(65, 20);
+            this.radioButtonIn.Size = new System.Drawing.Size(66, 20);
             this.radioButtonIn.TabIndex = 44;
             this.radioButtonIn.TabStop = true;
             this.radioButtonIn.Text = "Input";
@@ -793,7 +793,7 @@
             this.checkBoxOnOff.AutoSize = true;
             this.checkBoxOnOff.Location = new System.Drawing.Point(35, 185);
             this.checkBoxOnOff.Name = "checkBoxOnOff";
-            this.checkBoxOnOff.Size = new System.Drawing.Size(90, 20);
+            this.checkBoxOnOff.Size = new System.Drawing.Size(91, 20);
             this.checkBoxOnOff.TabIndex = 52;
             this.checkBoxOnOff.Text = "On / Off";
             this.checkBoxOnOff.UseVisualStyleBackColor = true;
@@ -815,7 +815,7 @@
             this.labelPwmRange.AutoSize = true;
             this.labelPwmRange.Location = new System.Drawing.Point(7, 162);
             this.labelPwmRange.Name = "labelPwmRange";
-            this.labelPwmRange.Size = new System.Drawing.Size(55, 16);
+            this.labelPwmRange.Size = new System.Drawing.Size(56, 16);
             this.labelPwmRange.TabIndex = 50;
             this.labelPwmRange.Text = "Range:";
             // 
@@ -831,7 +831,7 @@
             this.labelPwmValue.AutoSize = true;
             this.labelPwmValue.Location = new System.Drawing.Point(167, 195);
             this.labelPwmValue.Name = "labelPwmValue";
-            this.labelPwmValue.Size = new System.Drawing.Size(31, 16);
+            this.labelPwmValue.Size = new System.Drawing.Size(32, 16);
             this.labelPwmValue.TabIndex = 48;
             this.labelPwmValue.Text = "---";
             this.labelPwmValue.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -841,7 +841,7 @@
             this.checkBoxEnableJs.AutoSize = true;
             this.checkBoxEnableJs.Location = new System.Drawing.Point(8, 311);
             this.checkBoxEnableJs.Name = "checkBoxEnableJs";
-            this.checkBoxEnableJs.Size = new System.Drawing.Size(146, 20);
+            this.checkBoxEnableJs.Size = new System.Drawing.Size(147, 20);
             this.checkBoxEnableJs.TabIndex = 47;
             this.checkBoxEnableJs.Text = "Enable Joystick";
             this.checkBoxEnableJs.UseVisualStyleBackColor = true;
@@ -863,7 +863,7 @@
             this.radioButtonPwm.AutoSize = true;
             this.radioButtonPwm.Location = new System.Drawing.Point(10, 132);
             this.radioButtonPwm.Name = "radioButtonPwm";
-            this.radioButtonPwm.Size = new System.Drawing.Size(49, 20);
+            this.radioButtonPwm.Size = new System.Drawing.Size(50, 20);
             this.radioButtonPwm.TabIndex = 45;
             this.radioButtonPwm.TabStop = true;
             this.radioButtonPwm.Text = "PWM";
@@ -953,8 +953,7 @@
             // 
             // GpioTab
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.BtnRefresh);
             this.Controls.Add(this.checkBox40);
             this.Controls.Add(this.checkBox39);

@@ -842,7 +842,7 @@ namespace GpioManagerObjects
                 }
 
                 //  create a new seven seg display wrapper 
-                SevenSegDisplayWrapper newWrapper = new SevenSegDisplayWrapper(index, segPins);
+                SevenSegDisplayWrapper newWrapper = new SevenSegDisplayWrapper(name, index, segPins);
                 SevenSegDisplayDriversByIndex[index] = newWrapper;
                 SevenSegDisplayDriversByName[name] = index;
 

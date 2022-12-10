@@ -21,14 +21,12 @@ namespace GpioJoy
         LeftStickDown,
         LeftStickRight,
         LeftStickLeft,
-        //  button
         LeftStickBtn,
         //  Right Stick
         RightStickUp,
         RightStickDown,
         RightStickRight,
         RightStickLeft,
-        //  button
         RightStickBtn,
         //  Triggers
         LeftTrigger,
@@ -56,10 +54,17 @@ namespace GpioJoy
     /// </summary>
     public class JoystickInput
     {
+        /// <summary>
+        /// Constants
+        /// </summary>
         protected const double JoystickDeadZone = 0.15;
         protected const int JoystickDeadZoneInt = 15;
         protected double JoystickScale = (1 / (1 - JoystickDeadZone));
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public JoystickInput(Control label, Control control, JoystickControl assignment)
         {
             Assignment = assignment;
@@ -74,29 +79,36 @@ namespace GpioJoy
             }
         }
 
-        //  function to process vector (stick/trigger) input
+        //  Process vector (stick/trigger) input
         public virtual void ProcessInput(double input, bool updateUi) { return; }
 
-        //  function to process button input
+        //  Process button input
         public virtual void ProcessInput(bool input, bool updateUi) { return; }
 
+        //  Mouse Up
         public virtual void UiControl_MouseUp(object sender, MouseEventArgs e) { return;  }
 
+        //  Mouse Down
         public virtual void UiControl_MouseDown(object sender, MouseEventArgs e) { return; }
 
-        //  flag if is enabled
+        //  Enabled / Active Flags
         public bool Enabled { get; set; }
         public bool Active { get; set; }
 
-        // specific control on the joystick we are assigned to
+        // Joystick element we are assigned to
         public JoystickControl Assignment { get; protected set; }
 
+        //  UI Controls
         public Control UiLabel { get; protected set; }
         public Control UiControl { get; protected set; }
 
-        public virtual string Name { get { return ""; } }
+        //  Name
+        protected string _name;
+        public virtual string Name { get { return _name != null ? _name : ""; } }
 
-      
+        /// <summary>
+        /// Setup controls
+        /// </summary>
         public virtual void SetupControlUi()
         {
             if ( UiLabel != null )
@@ -104,8 +116,6 @@ namespace GpioJoy
             if(UiControl != null)
                 UiControl.Enabled = true;
         }
-        
-        
     }
 
 
@@ -120,19 +130,20 @@ namespace GpioJoy
         /// </summary>
         public JoystickStickInput(Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
-            Control = control;
-            CurrentValue = 0;
+            _trackBarControl = control;
+            _currentValue = 0;
         }
 
+        protected int _currentValue;
+        protected int _direction;
+        protected double _pwmScale;
+        protected bool _reverse;
 
-       
-      
+        protected TrackBar _trackBarControl;
 
-        //  Keep track of the last value processed as an integer (effective range of joystick is 0-100
-        protected int CurrentValue { get; set; }
-        protected TrackBar Control { get; set; }
+        public override string Name => _name;
 
-    
+
         /// <summary>
         /// Stick Positive returns true if the vector for this stick direction is > 0
         /// </summary>
@@ -156,6 +167,7 @@ namespace GpioJoy
             }
         }
 
+
         /// <summary>
         /// Reverse values for trigger assignments
         /// </summary>
@@ -175,14 +187,13 @@ namespace GpioJoy
             }
         }
 
+
         /// <summary>
         /// Get the value for this input
         /// handles the positive / negative stick direction
         /// returns 0 if this is negative stick and positive value, or if this is positive stick an negative value
         /// otherwise returns the value with the sign reversed if this is a stick negative direction
         /// </summary>
-        /// <param name="input">raw joystick input for this control item</param>
-        /// <returns>integer value between 0-100 for this input, sign is reversed if this is stick negative</returns>
         protected int NewValue(double input)
         {
             int newValue = (int)(input * 100);
@@ -200,19 +211,17 @@ namespace GpioJoy
         /// <summary>
         /// Update the UI control for this stick value
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="newValue"></param>
         protected void ProcessInputUi(double input, int newValue)
         {
             int value = (int)(input * 100);
 
-            if (Control != null)
+            if (_trackBarControl != null)
             {
-                Control.Invoke((MethodInvoker)delegate
+                _trackBarControl.Invoke((MethodInvoker)delegate
                 {
                     try
                     {
-                        Control.Value = ReverseValue ? value * -1 : value;
+                        _trackBarControl.Value = ReverseValue ? value * -1 : value;
                     }
                     catch (Exception e)
                     {
@@ -221,10 +230,7 @@ namespace GpioJoy
                 });
             }
         }
-
-       
     }
-
 
 
     /// <summary>
@@ -238,18 +244,13 @@ namespace GpioJoy
         /// </summary>
         public JoystickPwmStickInput(GpioPinWrapperJs pin, string displayName, Control label, TrackBar control, JoystickControl assignment, double scale, bool reverse) : base(label, control, assignment)
         {
-            Pin = pin;
-            PwmScale = scale;
-            Reverse = reverse;
-            DisplayName = displayName;
+            _pin = pin;
+            _pwmScale = scale;
+            _reverse = reverse;
+            _name = displayName;
         }
 
-        GpioPinWrapperJs Pin { get; set; }
-        double PwmScale { get; set; }
-        bool Reverse { get; set; }
-        public string DisplayName { get; protected set; }
-
-        public override string Name { get { return DisplayName; } }
+        GpioPinWrapperJs _pin;
 
         /// <summary>
         /// Process Input
@@ -261,20 +262,20 @@ namespace GpioJoy
 
             int newValue = NewValue(input);
 
-            if (CurrentValue != newValue)
+            if (_currentValue != newValue)
             {
                 if (input > JoystickDeadZone || input < (-1 * JoystickDeadZone))
                 {
                     double scaleInput = ((double)newValue / 100.0 - JoystickDeadZone) * JoystickScale;
-                    if (Reverse)
+                    if (_reverse)
                         scaleInput = 1.0 - scaleInput;
-                    Pin.PwmSetValue(scaleInput * PwmScale);
-                    CurrentValue = newValue;
+                    _pin.PwmSetValue(scaleInput * _pwmScale);
+                    _currentValue = newValue;
                 }
-                else if ( CurrentValue != 0 )
+                else if ( _currentValue != 0 )
                 {
-                    Pin.PwmSetValue(Reverse ? 1.0 : 0.0);
-                    CurrentValue = 0;
+                    _pin.PwmSetValue(_reverse ? 1.0 : 0.0);
+                    _currentValue = 0;
                 }
 
                 if (updateUi )
@@ -283,17 +284,20 @@ namespace GpioJoy
             }
         }
 
+
+        /// <summary>
+        /// Mouse up
+        /// </summary>
         public override void UiControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (Active)
             {
-                if (Control.Value > 0)
-                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
                 else
-                    ProcessInput((double)Control.Value / (double)(Control.Minimum*-1), false);
+                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
             }
         }
-
     }
 
 
@@ -309,23 +313,22 @@ namespace GpioJoy
         /// </summary>
         public JoystickStepperStickInput(StepperWrapper stepper, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
-            Direction = direction;
-            Stepper = stepper;
+            _direction = direction;
+            _stepper = stepper;
         }
 
-        // Index of stepper motor in wiringPiExtension
-        StepperWrapper Stepper { get; set; }
+        StepperWrapper _stepper;
 
-        public override string Name { get { return Stepper.Name; } }
+        public override string Name { get { return _stepper != null ? _stepper.Name : ""; } }
 
-        //  Direction Flag, this might be reversed stick
-        int Direction { get; set; }
-
+        /// <summary>
+        /// Enable pins
+        /// </summary>
         bool StepperPinsJoystickEnabled
         {
             get
             {
-                foreach (var nextPin in Stepper.Pins)
+                foreach (var nextPin in _stepper.Pins)
                 {
                     var nextPinJs = (GpioPinWrapperJs)nextPin;
                     if (!nextPinJs.JoystickAssignmentsEnabled)
@@ -334,6 +337,7 @@ namespace GpioJoy
                 return true;
             }
         }
+
 
         /// <summary>
         /// Process Input
@@ -345,7 +349,7 @@ namespace GpioJoy
 
             int newValue = NewValue(input);
 
-            if (CurrentValue != newValue)
+            if (_currentValue != newValue)
             {
                 if (input > JoystickDeadZone || input < (-1 * JoystickDeadZone))
                 {
@@ -353,18 +357,18 @@ namespace GpioJoy
                     double scaleInput = ((double)newValue / 100.0 - JoystickDeadZone) * JoystickScale;
                     scaleInput *= (input > 0.0 ? 1.0 : -1.0);
                     //  is this reverse stick
-                    if (StickPositive && Direction == -1)
+                    if (StickPositive && _direction == -1)
                         scaleInput *= -1;
                     //  set stepper speed
-                    Stepper.SetSpeed( (float)scaleInput);
+                    _stepper.SetSpeed( (float)scaleInput);
                     // update current value 
-                    CurrentValue = newValue;
+                    _currentValue = newValue;
                 }
-                else if (CurrentValue != 0)
+                else if (_currentValue != 0)
                 {
                     //  stop the stepper
-                    Stepper.Stop();
-                    CurrentValue = 0;
+                    _stepper.Stop();
+                    _currentValue = 0;
                 }
 
                 //  update the UI
@@ -373,17 +377,22 @@ namespace GpioJoy
             }
         }
 
+
+        /// <summary>
+        /// Mouse up
+        /// </summary>
         public override void UiControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (Active)
             {
-                if (Control.Value > 0)
-                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
                 else
-                    ProcessInput((double)Control.Value / (double)(Control.Minimum*-1), false);
+                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
             }
         }
     }
+
 
     /// <summary>
     /// Joystick input to control stepper motor
@@ -397,26 +406,25 @@ namespace GpioJoy
         /// </summary>
         public JoystickHBridgeStickInput(HBridgeWrapper hbridge, int direction, Control label, TrackBar control, JoystickControl assignment, double scale) : base(label, control, assignment)
         {
-            Direction = direction;
+            _direction = direction;
 
-            HBridge = hbridge;
-            PwmScale = scale;
+            _hBridge = hbridge;
+            _pwmScale = scale;
         }
 
-        // Index of stepper motor in wiringPiExtension
-        HBridgeWrapper HBridge { get; set; }
-        double PwmScale { get; set; }
+        HBridgeWrapper _hBridge;
 
-        int Direction { get; set; }
-
-        public override string Name { get { return HBridge.Name; } }
+        public override string Name { get { return _hBridge != null ? _hBridge.Name : ""; } }
 
 
+        /// <summary>
+        /// Pins joystick enabled
+        /// </summary>
         bool HBridgePinsJoystickEnabled
         {
             get
             {
-                foreach (var nextPin in HBridge.Pins)
+                foreach (var nextPin in _hBridge.Pins)
                 {
                     var nextPinJs = (GpioPinWrapperJs)nextPin;
                     if (!nextPinJs.JoystickAssignmentsEnabled)
@@ -425,6 +433,7 @@ namespace GpioJoy
                 return true;
             }
         }
+
 
         /// <summary>
         /// Process Input
@@ -436,7 +445,7 @@ namespace GpioJoy
 
             int newValue = NewValue(input);
 
-            if (CurrentValue != newValue)
+            if (_currentValue != newValue)
             {
                 if (input > JoystickDeadZone || input < (-1 * JoystickDeadZone))
                 {
@@ -444,17 +453,17 @@ namespace GpioJoy
                     double scaleInput = ((double)newValue / 100.0 - JoystickDeadZone) * JoystickScale;
                     //  is this reverse stick
                     int direction = input > 0 ? 1 : -1;
-                    if (StickPositive && Direction == -1)
+                    if (StickPositive && _direction == -1)
                         direction *= -1;
                     //  set HBridge value
-                    HBridge.SetHBridgeValue((input > 0.0) ? 1 : -1, scaleInput * PwmScale);
-                    CurrentValue = newValue;
+                    _hBridge.SetHBridgeValue((input > 0.0) ? 1 : -1, scaleInput * _pwmScale);
+                    _currentValue = newValue;
                 }
-                else if (CurrentValue != 0)
+                else if (_currentValue != 0)
                 {
                     //  turn it off
-                    HBridge.SetHBridgeValue(0, newValue);
-                    CurrentValue = 0;
+                    _hBridge.SetHBridgeValue(0, newValue);
+                    _currentValue = 0;
                 }
 
                 if ( updateUi )
@@ -462,14 +471,18 @@ namespace GpioJoy
             }
         }
 
+
+        /// <summary>
+        /// Mouse up
+        /// </summary>
         public override void UiControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (Active)
             {
-                if (Control.Value > 0)
-                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
                 else
-                    ProcessInput((double)Control.Value / (double)(Control.Minimum*-1), false);
+                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
             }
         }
     }
@@ -487,16 +500,13 @@ namespace GpioJoy
         /// </summary>
         public JoystickServoStickInput(ServoWrapper servo, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
-            Direction = direction;
-            Servo = servo;
+            _direction = direction;
+            _servo = servo;
         }
 
-        // Index of stepper motor in wiringPiExtension
-        ServoWrapper Servo { get; set; }
+        ServoWrapper _servo;
 
-        int Direction { get; set; }
-
-        public override string Name { get { return Servo.Pin.Name; } }
+        public override string Name { get { return _servo != null ? _servo.Pin.Name : ""; } }
 
         /// <summary>
         /// Process Input
@@ -508,7 +518,7 @@ namespace GpioJoy
 
             int newValue = NewValue(input);
 
-            if (CurrentValue != newValue)
+            if (_currentValue != newValue)
             {
                 if (input > JoystickDeadZone || input < (-1 * JoystickDeadZone))
                 {
@@ -516,18 +526,18 @@ namespace GpioJoy
                     double scaleInput = ((double)newValue / 100.0 - JoystickDeadZone) * JoystickScale;
                     scaleInput *= (input > 0 ? 1.0 : -1.0);
                     //  handle inverted stick
-                    if (StickPositive && Direction == -1)
+                    if (StickPositive && _direction == -1)
                         scaleInput *= -1;
-                    int tickOffset = (int)(scaleInput * (Servo.MaxTick - Servo.CenterTick));
-                    Servo.Pin.PwmSetValue(Servo.CenterTick + tickOffset);
-                    CurrentValue = newValue;
+                    int tickOffset = (int)(scaleInput * (_servo.MaxTick - _servo.CenterTick));
+                    _servo.Pin.PwmSetValue(_servo.CenterTick + tickOffset);
+                    _currentValue = newValue;
 
                 }
-                else if (CurrentValue != 0)
+                else if (_currentValue != 0)
                 {
                     //  return to center
-                    Servo.Pin.PwmSetValue(Servo.CenterTick);
-                    CurrentValue = 0;
+                    _servo.Pin.PwmSetValue(_servo.CenterTick);
+                    _currentValue = 0;
                 }
 
                 if ( updateUi )
@@ -535,14 +545,18 @@ namespace GpioJoy
             }
         }
 
+
+        /// <summary>
+        /// Mouse up
+        /// </summary>
         public override void UiControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (Active)
             {
-                if (Control.Value > 0)
-                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
                 else
-                    ProcessInput((double)Control.Value / (double)(Control.Minimum*-1), false);
+                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
             }
         }
     }
@@ -560,14 +574,14 @@ namespace GpioJoy
         /// </summary>
         public JoystickSevenSegDisplay(SevenSegDisplayWrapper display, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
-            Direction = direction;
-            Display = display;
+            _direction = direction;
+            _display = display;
         }
 
         // Index of display in wiringPiExtension
-        SevenSegDisplayWrapper Display { get; set; }
+        SevenSegDisplayWrapper _display;
 
-        int Direction { get; set; }
+        public override string Name { get { return _display != null ? _display.Name : ""; } }
 
         /// <summary>
         /// Process Input
@@ -579,26 +593,26 @@ namespace GpioJoy
 
             int newValue = NewValue(input);
 
-            if (CurrentValue != newValue)
+            if (_currentValue != newValue)
             {
-                if (CurrentValue == 0 && newValue < JoystickDeadZoneInt)
+                if (_currentValue == 0 && newValue < JoystickDeadZoneInt)
                     return;
 
                 if (newValue < JoystickDeadZoneInt)
                     newValue = 0;
 
-                CurrentValue = newValue;
+                _currentValue = newValue;
 
-                if (CurrentValue == 0)
+                if (_currentValue == 0)
                 {
-                    Display.Off();
+                    _display.Off();
                 }
                 else
                 {   
-                    int displayValue = (int)((CurrentValue - JoystickDeadZoneInt )*JoystickScale + 0.5);
-                    if (Direction < 0)
+                    int displayValue = (int)((_currentValue - JoystickDeadZoneInt )*JoystickScale + 0.5);
+                    if (_direction < 0)
                         displayValue *= -1;
-                    Display.Set(displayValue.ToString());
+                    _display.Set(displayValue.ToString());
                 }
             }
         }
@@ -607,15 +621,13 @@ namespace GpioJoy
         {
             if (Active)
             {
-                if (Control.Value > 0)
-                    ProcessInput((double)Control.Value / (double)Control.Maximum, false);
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
                 else
-                    ProcessInput((double)Control.Value / (double)(Control.Minimum * -1), false);
+                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum * -1), false);
             }
         }
-
     }
-
 
 
     /// <summary>
@@ -628,21 +640,17 @@ namespace GpioJoy
         /// </summary>
         public JoystickButtonInput(GpioPinWrapperJs pin, string displayName, Control label, Button control, JoystickControl assignment) : base(label, control, assignment)
         {
-            
-            Control = control;
-            Pin = pin;
+            _buttonControl = control;
+            _pin = pin;
             CurrentButtonValue = false;
-            DisplayName = displayName;
+            _name = displayName;
         }
 
-      
 
-        GpioPinWrapperJs Pin { get; set; }
-        Button Control { get; set; }
+        GpioPinWrapperJs _pin;
+        Button _buttonControl;
+        
         private bool CurrentButtonValue { get; set; }
-        public string DisplayName { get; protected set; }
-
-        public override string Name { get { return DisplayName; } }
 
         /// <summary>
         /// Process Input
@@ -656,14 +664,14 @@ namespace GpioJoy
 
             if (CurrentButtonValue != input)
             {
-                Pin.Write(input ? 1 : 0);
+                _pin.Write(input ? 1 : 0);
                 CurrentButtonValue = input;
 
-                if (updateUi && Control != null)
+                if (updateUi && _buttonControl != null)
                 {
-                    Control.Invoke((MethodInvoker)delegate
+                    _buttonControl.Invoke((MethodInvoker)delegate
                     {
-                        Control.BackColor = input ? System.Drawing.Color.Black : System.Drawing.Color.White;
+                        _buttonControl.BackColor = input ? System.Drawing.Color.Black : System.Drawing.Color.White;
                     });
                 }
             }
