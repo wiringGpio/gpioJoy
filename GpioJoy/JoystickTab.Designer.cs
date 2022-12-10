@@ -51,7 +51,7 @@ namespace GpioJoy
             // buttonConnectJoystick
             // 
             this.buttonConnectJoystick.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonConnectJoystick.Location = new System.Drawing.Point(378, 124);
+            this.buttonConnectJoystick.Location = new System.Drawing.Point(34, 129);
             this.buttonConnectJoystick.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonConnectJoystick.Name = "buttonConnectJoystick";
             this.buttonConnectJoystick.Size = new System.Drawing.Size(116, 37);

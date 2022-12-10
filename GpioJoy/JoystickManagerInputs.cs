@@ -61,7 +61,6 @@ namespace GpioJoy
         protected const int JoystickDeadZoneInt = 15;
         protected double JoystickScale = (1 / (1 - JoystickDeadZone));
 
-
         /// <summary>
         /// Constructor
         /// </summary>

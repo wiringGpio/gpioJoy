@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace GpioJoy
 {
+    /// <summary>
+    /// Container for function assignment
+    /// </summary>
     public class FunctionAssignmentContainer
     {
         public FunctionAssignmentContainer(string name, MethodInfo method, JoystickManager jsManager)
@@ -45,6 +48,10 @@ namespace GpioJoy
         }
     }
 
+
+    /// <summary>
+    /// Container for button function assignments
+    /// </summary>
     public class FunctionButtonAssignmentContainer : FunctionAssignmentContainer
     {
         public FunctionButtonAssignmentContainer(string name, MethodInfo method,  Button control, JoystickManager jsManager) : base(name, method, jsManager)
@@ -61,7 +68,6 @@ namespace GpioJoy
         public override Control UiControl => _buttonControl;
         public override Control UiLabel => _buttonControl;
 
-
         public override void HandleMouseDown(object sender, MouseEventArgs e)
         {
             if (ActiveConfiguration)
@@ -74,6 +80,10 @@ namespace GpioJoy
         }
     }
 
+
+    /// <summary>
+    /// Container for stick assignments
+    /// </summary>
     public class FunctionStickAssignmentContainer : FunctionAssignmentContainer
     {
         public FunctionStickAssignmentContainer(string name, MethodInfo method, Control label, TrackBar control, JoystickManager jsManager) : base(name, method, jsManager)
@@ -96,6 +106,9 @@ namespace GpioJoy
     }
 
 
+    /// <summary>
+    /// State changed Delegate
+    /// </summary>
     public delegate void StateChangedEvent(object sender, EventArgs e);
 
 
@@ -107,8 +120,6 @@ namespace GpioJoy
         //  Events
         public event StateChangedEvent OnStateChanged;
 
-        //  Public Interface
-        //
 
         /// <summary>
         /// Current configuration name
@@ -117,10 +128,10 @@ namespace GpioJoy
         {
             get
             {
-                if (CurrentControlAssignments == null)
+                if (_currentControlAssignments == null)
                     return "";
 
-                return ControlAssignments.FirstOrDefault(x => x.Value == CurrentControlAssignments).Key;
+                return _controlAssignments.FirstOrDefault(x => x.Value == _currentControlAssignments).Key;
             }
         }
 
@@ -140,16 +151,16 @@ namespace GpioJoy
         /// </summary>
         public void CreateConfiguration(string configName)
         {
-            if ( ControlAssignments.ContainsKey(configName) || FunctionAssignments.ContainsKey(configName))
+            if ( _controlAssignments.ContainsKey(configName) || _functionAssignments.ContainsKey(configName))
             {
                 return;
             }
 
-            ControlAssignments[configName] = new List<JoystickInput>();
-            ControlAssignmentsList.Add(ControlAssignments[configName]);
+            _controlAssignments[configName] = new List<JoystickInput>();
+            _controlAssignmentsList.Add(_controlAssignments[configName]);
 
-            FunctionAssignments[configName] = new Dictionary<JoystickControl, List<FunctionAssignmentContainer>>();
-            FunctionAssignmentsList.Add(FunctionAssignments[configName]);
+            _functionAssignments[configName] = new Dictionary<JoystickControl, List<FunctionAssignmentContainer>>();
+            _functionAssignmentsList.Add(_functionAssignments[configName]);
         }
 
 
@@ -158,38 +169,39 @@ namespace GpioJoy
         /// </summary>
         public void ToggleConfiguration(int direction)
         {
-            if (CurrentControlAssignments != null)
+            if (_currentControlAssignments != null)
             {
                 //  get the index of the current configuration
-                int index = ControlAssignmentsList.IndexOf(CurrentControlAssignments);
+                int index = _controlAssignmentsList.IndexOf(_currentControlAssignments);
                 int nextIndex = index + direction;
 
-                if (nextIndex >= ControlAssignmentsList.Count)
+                if (nextIndex >= _controlAssignmentsList.Count)
                 {
                     nextIndex = 0;
                 }
                 else if (nextIndex < 0)
                 {
-                    nextIndex = ControlAssignmentsList.Count-1;
+                    nextIndex = _controlAssignmentsList.Count-1;
                 }
 
                 SetCurrentAssignmentsInactive();
-                CurrentControlAssignments = ControlAssignmentsList[nextIndex];
-                CurrentFunctionAssignments = FunctionAssignmentsList[nextIndex];
+                _currentControlAssignments = _controlAssignmentsList[nextIndex];
+                _currentFunctionAssignments = _functionAssignmentsList[nextIndex];
                 SetCurrentAssignmentsActive();
             }
         }
+
 
         /// <summary>
         /// Go to home configuration (first one loaded)
         /// </summary>
         public void HomeConfiguration()
         {
-            if (CurrentControlAssignments != null && ControlAssignmentsList.Count > 0)
+            if (_currentControlAssignments != null && _controlAssignmentsList.Count > 0)
             {
                 SetCurrentAssignmentsInactive();
-                CurrentControlAssignments = ControlAssignmentsList[0];
-                CurrentFunctionAssignments = FunctionAssignmentsList[0];
+                _currentControlAssignments = _controlAssignmentsList[0];
+                _currentFunctionAssignments = _functionAssignmentsList[0];
                 SetCurrentAssignmentsActive();
             }
         }
@@ -215,9 +227,9 @@ namespace GpioJoy
             try
             {
                 List<JoystickInput> assignments;
-                if (ControlAssignments.TryGetValue(configName, out assignments))
+                if (_controlAssignments.TryGetValue(configName, out assignments))
                 {
-                    CurrentControlAssignments = assignments;
+                    _currentControlAssignments = assignments;
                 }
             }
             catch (Exception e)
@@ -235,9 +247,9 @@ namespace GpioJoy
         public void SetFunctionAssignments(string configName)
         {
             Dictionary<JoystickControl, List<FunctionAssignmentContainer>> assignments;
-            if (FunctionAssignments.TryGetValue(configName, out assignments))
+            if (_functionAssignments.TryGetValue(configName, out assignments))
             {
-                CurrentFunctionAssignments = assignments;
+                _currentFunctionAssignments = assignments;
             }
         }
 
@@ -247,9 +259,9 @@ namespace GpioJoy
         /// </summary>
         public void SetControlLabels()
         {
-            if ( CurrentFunctionAssignments != null )
+            if ( _currentFunctionAssignments != null )
             {
-                foreach (var nextFunctionList in CurrentFunctionAssignments)
+                foreach (var nextFunctionList in _currentFunctionAssignments)
                 {
                     foreach ( var nextFunction in nextFunctionList.Value)
                     {
@@ -257,9 +269,9 @@ namespace GpioJoy
                     }
                 }
             }
-            if (CurrentControlAssignments != null)
+            if (_currentControlAssignments != null)
             {
-                foreach (var nextControl in CurrentControlAssignments)
+                foreach (var nextControl in _currentControlAssignments)
                 {
                     nextControl.SetupControlUi();
                 }
@@ -267,26 +279,23 @@ namespace GpioJoy
         }
 
 
-
         /// <summary>
         /// Constructor
         /// </summary>
         public JoystickManager(GpioManager pinManager)
         {
-            ControlAssignments = new Dictionary<string, List<JoystickInput>>();
-            ControlAssignmentsList = new List<List<JoystickInput>>();
-            CurrentControlAssignments = null;
+            _controlAssignments = new Dictionary<string, List<JoystickInput>>();
+            _controlAssignmentsList = new List<List<JoystickInput>>();
+            _currentControlAssignments = null;
 
-            FunctionAssignments = new Dictionary<string, Dictionary<JoystickControl, List<FunctionAssignmentContainer>>>();
-            FunctionAssignmentsList = new List<Dictionary<JoystickControl, List<FunctionAssignmentContainer>>>();
-            CurrentFunctionAssignments = null;
+            _functionAssignments = new Dictionary<string, Dictionary<JoystickControl, List<FunctionAssignmentContainer>>>();
+            _functionAssignmentsList = new List<Dictionary<JoystickControl, List<FunctionAssignmentContainer>>>();
+            _currentFunctionAssignments = null;
 
             PinManager = pinManager;
 
             Joystick = new SimpleJoystick();
             Joystick.XboxJoystickEventHandler += Joystick_XboxJoystickEventHandler;
-
-
         }
 
         //  References to objects
@@ -297,19 +306,20 @@ namespace GpioJoy
 
         //  Joystick Pin Control Assignments
         //  dictioinary of configuration name to list of pin control assignments
-        protected Dictionary<string, List<JoystickInput>> ControlAssignments { get; set; }
+        Dictionary<string, List<JoystickInput>> _controlAssignments;
         //  store the different configuration assignments in an ordered list to enable toggle
-        List<List<JoystickInput>> ControlAssignmentsList;
+        List<List<JoystickInput>> _controlAssignmentsList;
         //  reference to the current configuration control assignments
-        List<JoystickInput> CurrentControlAssignments;
+        List<JoystickInput> _currentControlAssignments;
 
         //  Joystick function assignments
         //  dictionary of configuration name to list of function assignments
-        protected Dictionary<string, Dictionary<JoystickControl, List<FunctionAssignmentContainer>>> FunctionAssignments { get; set; }
+        Dictionary<string, Dictionary<JoystickControl, List<FunctionAssignmentContainer>>> _functionAssignments;
         //  store different configurations in a list to enable toggle
-        List<Dictionary<JoystickControl, List<FunctionAssignmentContainer>>> FunctionAssignmentsList;
+        List<Dictionary<JoystickControl, List<FunctionAssignmentContainer>>> _functionAssignmentsList;
         //  reference to the current configuration function assignments
-        Dictionary<JoystickControl, List<FunctionAssignmentContainer>> CurrentFunctionAssignments;
+        Dictionary<JoystickControl, List<FunctionAssignmentContainer>> _currentFunctionAssignments;
+
 
         /// <summary>
         /// Set current control assignments as inactive
@@ -317,17 +327,17 @@ namespace GpioJoy
         /// </summary>
         void SetCurrentAssignmentsInactive()
         {
-            if (CurrentControlAssignments != null)
+            if (_currentControlAssignments != null)
             {
-                foreach (var nextControl in CurrentControlAssignments)
+                foreach (var nextControl in _currentControlAssignments)
                 {
                     nextControl.Active = false;
                 }
             }
 
-            if ( CurrentFunctionAssignments != null )
+            if ( _currentFunctionAssignments != null )
             {
-                foreach ( var nextFnAssignment in CurrentFunctionAssignments)
+                foreach ( var nextFnAssignment in _currentFunctionAssignments)
                 {
                     foreach ( var nextFn in nextFnAssignment.Value)
                     {
@@ -344,17 +354,17 @@ namespace GpioJoy
         /// </summary>
         void SetCurrentAssignmentsActive()
         {
-            if (CurrentControlAssignments != null)
+            if (_currentControlAssignments != null)
             {
-                foreach (var nextControl in CurrentControlAssignments)
+                foreach (var nextControl in _currentControlAssignments)
                 {
                     nextControl.Active = true;
                 }
             }
 
-            if (CurrentFunctionAssignments != null)
+            if (_currentFunctionAssignments != null)
             {
-                foreach (var nextFnAssignment in CurrentFunctionAssignments)
+                foreach (var nextFnAssignment in _currentFunctionAssignments)
                 {
                     foreach (var nextFn in nextFnAssignment.Value)
                     {
@@ -365,19 +375,15 @@ namespace GpioJoy
         }
 
 
-
-
         /// <summary>
         /// XBox Controller event
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         void Joystick_XboxJoystickEventHandler(object sender, SimpleJoy.XBoxJoystickEventArgs e)
         {
-            if (CurrentControlAssignments != null)
+            if (_currentControlAssignments != null)
             {
                 // JoystickUserInterfaceControls(e);
-                foreach (var nextControlAssignment in CurrentControlAssignments)
+                foreach (var nextControlAssignment in _currentControlAssignments)
                 {
                     switch (nextControlAssignment.Assignment)
                     {
@@ -457,10 +463,10 @@ namespace GpioJoy
                 }
             }
 
-            if (CurrentFunctionAssignments != null)
+            if (_currentFunctionAssignments != null)
             {
                 // now do the function assignments
-                foreach (var nextFnAssignment in CurrentFunctionAssignments)
+                foreach (var nextFnAssignment in _currentFunctionAssignments)
                 {
                     switch (nextFnAssignment.Key)
                     {
@@ -653,14 +659,14 @@ namespace GpioJoy
                     break;
             }
             
-            ControlAssignments[configName].Add(newInput);
+            _controlAssignments[configName].Add(newInput);
 
             return newInput;
         }
 
+
         /// <summary>
-        /// Create a joystick assignment object, and connect it to the right control on the UI form
-        /// This case is for stepper driver pin collection
+        /// Create a StepperWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
         public JoystickInput AddJoystickAssignment(string configName, MainForm form, StepperWrapper stepper, int direction, JoystickControl assignment)
         {
@@ -707,14 +713,13 @@ namespace GpioJoy
                     break;
             }
             
-            ControlAssignments[configName].Add(newInput);
+            _controlAssignments[configName].Add(newInput);
             return newInput;
         }
 
 
         /// <summary>
-        /// Create a joystick assignment object, and connect it to the right control on the UI form
-        /// This case is for stepper driver pin collection
+        /// Create a HBridgeWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
         public JoystickInput AddJoystickAssignment(string configName, MainForm form, HBridgeWrapper hbridge, int direction, JoystickControl assignment, double scale = 1.0)
         {
@@ -761,14 +766,13 @@ namespace GpioJoy
                     break;
             }
 
-            ControlAssignments[configName].Add(newInput);
+            _controlAssignments[configName].Add(newInput);
             return newInput;
         }
 
 
         /// <summary>
-        /// Create a joystick assignment object, and connect it to the right control on the UI form
-        /// This case is for stepper driver pin collection
+        /// Create a ServoWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
         public JoystickInput AddJoystickAssignment(string configName, MainForm form, ServoWrapper servo, int direction, JoystickControl assignment)
         {
@@ -812,11 +816,14 @@ namespace GpioJoy
                     break;
             }
 
-            ControlAssignments[configName].Add(newInput);
+            _controlAssignments[configName].Add(newInput);
             return newInput;
         }
 
 
+        /// <summary>
+        /// Create a SevenSegDisplayWrapper joystick assignment object, and connect it to the right control on the UI form
+        /// </summary>
         public JoystickInput AddJoystickAssignment(string configName, MainForm form, SevenSegDisplayWrapper display, int direction, JoystickControl assignment)
         {
             JoystickInput newInput = null;
@@ -862,16 +869,19 @@ namespace GpioJoy
                     break;
             }
 
-            ControlAssignments[configName].Add(newInput);
+            _controlAssignments[configName].Add(newInput);
             return newInput;
         }
 
 
+        /// <summary>
+        /// Add a function assignment and connect it to the right control on the UI form
+        /// </summary>
         public void AddFunctionAssignment(string configName, string fnName, MainForm form, JoystickControl assignment, MethodInfo method)
         {
-            if (!FunctionAssignments[configName].ContainsKey(assignment))
+            if (!_functionAssignments[configName].ContainsKey(assignment))
             {
-                FunctionAssignments[configName][assignment] = new List<FunctionAssignmentContainer>();
+                _functionAssignments[configName][assignment] = new List<FunctionAssignmentContainer>();
             }
 
             FunctionAssignmentContainer newContainer = null;
@@ -911,7 +921,7 @@ namespace GpioJoy
             }
 
 
-            FunctionAssignments[configName][assignment].Add(newContainer);
+            _functionAssignments[configName][assignment].Add(newContainer);
         }
 
     }

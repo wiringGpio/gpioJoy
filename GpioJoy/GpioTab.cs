@@ -16,18 +16,19 @@ namespace GpioJoy
         {
             InitializeComponent();
            
-            PinUi = new Dictionary<int, CheckBox>();
+            _pinUi = new Dictionary<int, CheckBox>();
         }
+
 
         /// <summary>
         /// Initialize Function
         /// </summary>
         public void InitializeGpioTab(GpioManager pinManager)
         {
-            PinManager = pinManager;
-            PinManager.GpioEvents += GpioEvent;
+            _pinManager = pinManager;
+            _pinManager.GpioEvents += GpioEvent;
 
-            foreach (var nextPinNumber in PinManager.GetAvailablePins())
+            foreach (var nextPinNumber in _pinManager.GetAvailablePins())
             {
                 comboBoxSelectPin.Items.Add(nextPinNumber.PinNumber);
             }
@@ -38,16 +39,11 @@ namespace GpioJoy
             ShowPinOutputControls(false, null);
         }
 
-
-
-        //  Properties
-        //
-
         //  Reference to the pin manager
-        GpioManager PinManager { get; set; }
+        GpioManager _pinManager;
 
         //  Map of check boxes to pin index
-        private Dictionary<int, CheckBox> PinUi;
+        Dictionary<int, CheckBox> _pinUi;
 
         //  Event Handler
         void GpioEvent(object sender, GpioEventArgs e)
@@ -56,15 +52,12 @@ namespace GpioJoy
         }
 
 
-        
-
-
         /// <summary>
         /// Map the UI controls to pin index number
         /// </summary>
         private void SetupUiForPins()
         {
-            foreach (var nextPin in PinManager.GetAvailablePins())
+            foreach (var nextPin in _pinManager.GetAvailablePins())
             {
                 //  extension pins don't have combo box UI
                 if (nextPin.PinNumber > 40)
@@ -77,7 +70,7 @@ namespace GpioJoy
                     if (control.Length == 1)
                     {
                         CheckBox cb = (CheckBox)control[0];
-                        PinUi.Add(nextPin.PinNumber, cb);
+                        _pinUi.Add(nextPin.PinNumber, cb);
                     }
                 }
                 catch (Exception e)
@@ -87,12 +80,13 @@ namespace GpioJoy
             }
         }
 
+
         /// <summary>
         /// Refresh UI for all pins
         /// </summary>
         private void SetUiStateForAll()
         {
-            foreach (var nextPin in PinManager.GetAvailablePins())
+            foreach (var nextPin in _pinManager.GetAvailablePins())
             {
                 SetUiStateForPin(nextPin, true);
             }
@@ -101,8 +95,8 @@ namespace GpioJoy
      
         /// <summary>
         /// Refresh UI for single pin
+        /// Set enable to true for init window, otherwise false
         /// </summary>
-        /// <param name="enable">Set to true for init window, otherwise don't use</param>
         private void SetUiStateForPin(GpioPinWrapper pin, bool enable = false)
         {
             try
@@ -113,7 +107,7 @@ namespace GpioJoy
 
                 CheckBox cb = null;
 
-                PinUi.TryGetValue(pin.PinNumber, out cb);
+                _pinUi.TryGetValue(pin.PinNumber, out cb);
 
                 if (enable)
                     cb.Enabled = true;
@@ -142,7 +136,7 @@ namespace GpioJoy
         /// </summary>
         private void SetUiStateForPin(int pinNumber)
         {
-            SetUiStateForPin(PinManager.GetPin(pinNumber));
+            SetUiStateForPin(_pinManager.GetPin(pinNumber));
         }
 
 
@@ -158,7 +152,7 @@ namespace GpioJoy
             {
                 int index;
                 Int32.TryParse(checkedBox.Tag.ToString(), out index);
-                GpioPinWrapper selectedPin = PinManager.GetPin(index);
+                GpioPinWrapper selectedPin = _pinManager.GetPin(index);
 
                 if (selectedPin != null)
                 {
@@ -201,8 +195,6 @@ namespace GpioJoy
         }
 
 
-       
-
         /// <summary>
         /// Pin Combo box selection changed event
         /// </summary>
@@ -214,7 +206,7 @@ namespace GpioJoy
             {
                 Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
 
-                GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+                GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
                 if (selectedPin != null)
                 {
@@ -257,7 +249,7 @@ namespace GpioJoy
                 {
                     Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
 
-                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
                     if (selectedPin != null)
                     {
@@ -288,7 +280,7 @@ namespace GpioJoy
 
                         //  check box state
                         CheckBox cb = null;
-                        if (!PinUi.TryGetValue(selectedIndex, out cb))
+                        if (!_pinUi.TryGetValue(selectedIndex, out cb))
                             return;
                         cb.Checked = selectedPin.Read() == 1;
                     }
@@ -301,6 +293,7 @@ namespace GpioJoy
                 }
             }
         }
+
 
         /// <summary>
         /// Pin Mode - Output radio button changed handler
@@ -317,7 +310,7 @@ namespace GpioJoy
                 try
                 {
                     Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
-                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
                     if ( selectedPin != null )
                     {
@@ -345,7 +338,7 @@ namespace GpioJoy
 
                         selectedPin.Write(0);
                         CheckBox cb = null;
-                        if (!PinUi.TryGetValue(selectedIndex, out cb))
+                        if (!_pinUi.TryGetValue(selectedIndex, out cb))
                             return;
                         cb.Checked = false;
                     }
@@ -373,7 +366,7 @@ namespace GpioJoy
                 try
                 {
                     Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
-                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+                    GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
                     if (selectedPin != null)
                     {
@@ -396,13 +389,13 @@ namespace GpioJoy
                         selectedPin.Mode = PinMode.PWMOutput;
                         //selectedPin.Write(1);
 
-                        PinManager.StartPwm(selectedPin.PinNumber);
+                        _pinManager.StartPwm(selectedPin.PinNumber);
 
                         //  show the controls
                         ShowPinOutputControls(true, selectedPin);
 
                         CheckBox cb = null;
-                        if (!PinUi.TryGetValue(selectedIndex, out cb))
+                        if (!_pinUi.TryGetValue(selectedIndex, out cb))
                             return;
                         cb.Checked = false;
                     }
@@ -415,9 +408,6 @@ namespace GpioJoy
         }
 
 
-       
-
-
         /// <summary>
         /// PWM Set Range Button handler
         /// </summary>
@@ -428,7 +418,7 @@ namespace GpioJoy
             {
                 int selectedIndex = -1;
                 Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
-                GpioPinWrapper selectedPin = PinManager.GetPin(selectedIndex);
+                GpioPinWrapper selectedPin = _pinManager.GetPin(selectedIndex);
 
                 if (selectedPin != null)
                 {
@@ -449,7 +439,7 @@ namespace GpioJoy
                             try
                             {
                                 CheckBox cb = null;
-                                PinUi.TryGetValue(selectedIndex, out cb);
+                                _pinUi.TryGetValue(selectedIndex, out cb);
                                 SetCheckBoxCheck(cb, true);
                             }
                             catch
@@ -482,7 +472,7 @@ namespace GpioJoy
             {
                 int selectedIndex = -1;
                 Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
-                GpioPinWrapper selectedPin = PinManager.GetPin(selectedIndex);
+                GpioPinWrapper selectedPin = _pinManager.GetPin(selectedIndex);
 
                 if (selectedPin != null)
                 {
@@ -506,7 +496,7 @@ namespace GpioJoy
             {
                 int selectedIndex = -1;
                 Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
-                GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+                GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
                 if (selectedPin != null)
                 {
@@ -557,7 +547,6 @@ namespace GpioJoy
                                 buttonSetPwmRange.Show();
                             }
 
-                            
                             checkBoxOnOff.Hide();
 
                             //  text for start / set range button
@@ -585,7 +574,6 @@ namespace GpioJoy
                             {
                                 checkBoxOnOff.Show();
 
-
                                 checkBoxOnOff.CheckedChanged -= checkBoxOnOff_CheckedChanged;
                                 checkBoxOnOff.Checked = pin.Read() == 1;
                                 checkBoxOnOff.CheckedChanged += checkBoxOnOff_CheckedChanged;
@@ -595,9 +583,6 @@ namespace GpioJoy
                         }
                         break;
                 }
-                
-
-               
             }
             else
             {
@@ -610,6 +595,7 @@ namespace GpioJoy
                 buttonCenterFreq.Show();
             }
         }
+
 
         /// <summary>
         /// Set Check Box State, short circuts the handler to update value manually
@@ -648,12 +634,15 @@ namespace GpioJoy
             }
         }
 
+        /// <summary>
+        /// Checkbox on off changed
+        /// </summary>
         private void checkBoxOnOff_CheckedChanged(object sender, EventArgs e)
         {
             int selectedIndex = 0;
             Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
 
-            GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+            GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
             if (selectedPin != null)
             {
@@ -662,17 +651,21 @@ namespace GpioJoy
             }
         }
 
+
+        /// <summary>
+        /// Center servo frequency button
+        /// </summary>
         private void buttonCenterFreq_Click(object sender, EventArgs e)
         {
             int selectedIndex = 0;
             Int32.TryParse(comboBoxSelectPin.SelectedItem.ToString(), out selectedIndex);
 
-            GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)PinManager.GetPin(selectedIndex);
+            GpioPinWrapperJs selectedPin = (GpioPinWrapperJs)_pinManager.GetPin(selectedIndex);
 
             if (selectedPin != null)
             {
                 //  calculate the center tick, servo wants 1.5 milisecond pulse for stationary position
-                double freq = PinManager.PinPwmFrequency(selectedPin.PinNumber);
+                double freq = _pinManager.PinPwmFrequency(selectedPin.PinNumber);
                 double cycleMs = 1000.0 / freq;
                 double pulseMs = 1.5;
                 //  initial tick for this pwm range
@@ -689,7 +682,6 @@ namespace GpioJoy
                 labelPwmValue.Text = ((int)(initialValue * selectedPin.PwmRange)).ToString();
                 trackBarPwm.ValueChanged += trackBarPwm_ValueChanged;
             }
-        
         }
     }
 }

@@ -9,9 +9,6 @@ using System.IO;
 
 namespace GpioJoy
 {
-
-
-
     public partial class MainForm : Form
     {
         /// <summary>
@@ -24,27 +21,37 @@ namespace GpioJoy
 
             _pinManager = pinManager;
             gpioTab.InitializeGpioTab(_pinManager);
-            
+
             _jsManager = jsManager;
             _jsManager.OnStateChanged += JsManager_StateChanged;
             joystickTab1.InitializeJoystickTab(_jsManager);
 
-            var configFiles = Directory.GetFiles("./Config/", "*.xml", SearchOption.AllDirectories);
-            foreach (var nextFile in configFiles)
-            {
-                LoadConfiguration.LoadConfigFile(Path.Combine( nextFile), this, _pinManager, _jsManager);
-            }
-            
+            LoadConfigurations();
+
             InitLabels();
             _jsManager.SetControlLabels();
-            
+
             labelConfigFile.Text = _jsManager.ConfigName;
         }
+
 
         //  The GPIO Pin Manager
         GpioManager _pinManager;
         //  The Joystick
         JoystickManager _jsManager;
+
+
+        /// <summary>
+        /// Load configuration files
+        /// </summary>
+        private void LoadConfigurations()
+        {
+            var configFiles = Directory.GetFiles("./Config/", "*.xml", SearchOption.AllDirectories);
+            foreach (var nextFile in configFiles)
+            {
+                LoadConfiguration.LoadConfigFile(Path.Combine(nextFile), this, _pinManager, _jsManager);
+            }
+        }
 
 
         /// <summary>

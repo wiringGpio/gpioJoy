@@ -16,32 +16,30 @@ namespace GpioJoy
         /// <summary>
         /// Pin Wrapper for Joystick
         /// sub classed from basic pin wrapper
+        /// Set hwPwm = true to use HW pwm, otherwise software PWM is used
         /// </summary>
-        /// <param name="pinNumber">physical pin number</param>
-        /// <param name="hwPwm">flag if this is the RPi hardware PWM pin (12) or a PCA chip pin</param>
         public GpioPinWrapperJs(int pinNumber, string name, bool hwPwm = false) 
             : base(pinNumber, name, hwPwm)
         {
             JoystickAssignments = new List<JoystickInput>();
         }
 
-        //  Public Properties
-        //
 
         /// <summary>
         /// This pin has a joystick assignment ?
         /// </summary>
         public bool HasJoystickAssignment { get { return JoystickAssignments.Count > 0; } }
 
+
         /// <summary>
         /// Add a joystick assignment to this pin
         /// </summary>
-        /// <param name="assignment"></param>
         public void AddJoystickAssignment(JoystickInput assignment)
         {
             JoystickAssignments.RemoveAll(x => x.Assignment == assignment.Assignment);
             JoystickAssignments.Add(assignment);
         }
+
 
         /// <summary>
         /// Does this pin have any enabled joystick assignments ?
@@ -59,10 +57,10 @@ namespace GpioJoy
             }
         }
 
+
         /// <summary>
         /// Set joystick assignments enabled/disabled
         /// </summary>
-        /// <param name="enable"></param>
         public void SetJoystickAssignmentEnabled(bool enable)
         {
             foreach (var nextAssignment in JoystickAssignments)
@@ -74,8 +72,6 @@ namespace GpioJoy
         /// List of joystick assignments for this pin
         /// </summary>
         protected List<JoystickInput> JoystickAssignments { get; set; }
-
-
     }
 
 

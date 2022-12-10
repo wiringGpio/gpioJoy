@@ -11,7 +11,6 @@ namespace GpioJoy
 {
     public partial class JoystickManager
     {
-
         /// <summary>
         /// Go to the 'home' configuration page (first one loaded)
         /// </summary>
@@ -56,12 +55,5 @@ namespace GpioJoy
             }
         }
         int GoForwardChangeTick = 0;
-
-
-
-     
-
-
-
     }
 }

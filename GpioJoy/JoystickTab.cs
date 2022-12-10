@@ -14,6 +14,9 @@ namespace GpioJoy
 {
     public partial class JoystickTab : UserControl
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public JoystickTab()
         {
             InitializeComponent();
@@ -139,6 +142,9 @@ namespace GpioJoy
         }
 
 
+        /// <summary>
+        /// Joystick disconnected handler
+        /// </summary>
         private void Joystick_JoystickDisconnectHandler(object sender, EventArgs e)
         {
             //  TODO

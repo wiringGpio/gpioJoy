@@ -107,8 +107,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="remote-host.ssh.txt" />
-    <None Include="LinuxMintGpio.ssh.txt" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
