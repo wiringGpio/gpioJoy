@@ -45,6 +45,7 @@ namespace GpioJoy
             this.buttonRefresh.TabIndex = 19;
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
             // buttonConnectJoystick
             // 
@@ -56,6 +57,7 @@ namespace GpioJoy
             this.buttonConnectJoystick.TabIndex = 0;
             this.buttonConnectJoystick.Text = "Connect";
             this.buttonConnectJoystick.UseVisualStyleBackColor = true;
+            this.buttonConnectJoystick.Click += new System.EventHandler(this.buttonConnectJoystick_Click);
             // 
             // comboBoxJoystickPaths
             // 
