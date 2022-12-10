@@ -70,6 +70,11 @@ namespace GpioJoy
             this.comboBoxJoystickPaths.Size = new System.Drawing.Size(326, 24);
             this.comboBoxJoystickPaths.TabIndex = 18;
             // 
+            // backgroundWorkerConnectJoystick
+            // 
+            this.backgroundWorkerConnectJoystick.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerConnectJoystick_DoWork);
+            this.backgroundWorkerConnectJoystick.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerConnectJoystick_RunWorkerCompleted);
+            // 
             // JoystickTab
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
