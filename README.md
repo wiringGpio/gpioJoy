@@ -1,11 +1,12 @@
 # GPIO Joy #
 
-GPIOJoy is an application for the Raspberry Pi or NVIDIA Jetson computer that allows you to control the GPIO pins with an XBox joystick.  
+GpioJoy is a no code solution to control GPIO pins on the Raspberry Pi or NVIDIA Jetson using a XBox joystick controller. Simply create one or more config.xml files where you can map the joysticks and buttons to GPIO pins or devices such as stepper motors, motors with rotary encoders, and seven segment displays
 
-You can map the buttons to turn pins on and off or to actuate a function by name in your code.  You can map the joysticks to control pin pulse width modulation (PWM),  unipolar and bipolar stepper motors, HBridge motor circuits, and seven segment displays.
+  
 
-You do not need to write any code to configure the application to control your specific Raspberry Pi creation. The buttons and joysticks are mapped to the GPIO pins using an XML file.  Simply put your configuration in an XML file and copy it to the /home/<user>/gpioJoy/Config folder on the Raspberry Pi of the Jetson, and then run the program.
+![readme.png](https://raw.githubusercontent.com/wiringGpio/gpioJoy/main/readme.png)
 
-Joystick control is implemented in the SimpleJoy assembly, thakks to [this shared code](http://mpolaczyk.pl/raspberry-pi-mono-c-joystick-handler/).
+If you do want to write a some of your own code, you can also map joysticks and buttons to your own assemblies using the program's public properties to access pins and devices defined in your configuration files.
+ 
+For more informations, please see our website at: [LittleBytesOfPi.com/GPIOJoy](http://littlebytesofpi.com/gpiojoy)
 
-For more informations, please see our website at:  [LittleBytesOfPi.com/GPIOJoy](http://littlebytesofpi.com/gpiojoy)
