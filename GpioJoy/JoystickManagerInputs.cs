@@ -154,10 +154,10 @@ namespace GpioJoy
                 {
                     case JoystickControl.LeftStickUp:
                     case JoystickControl.LeftStickRight:
-                    case JoystickControl.LeftTrigger:
+                    //case JoystickControl.LeftTrigger:
                     case JoystickControl.RightStickUp:
                     case JoystickControl.RightStickRight:
-                    case JoystickControl.RightTrigger:
+                    //case JoystickControl.RightTrigger:
                         return true;
 
                     default:

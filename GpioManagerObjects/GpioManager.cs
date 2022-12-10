@@ -239,6 +239,17 @@ namespace GpioManagerObjects
         /// <returns>stepper wrapper object created</returns>
         public StepperWrapper CreateStepperDriver(XmlNode sequenceElement, XmlNode stepperElement)
         {
+            string stepperName = "";
+            XmlNode nameNode = stepperElement.SelectSingleNode("Name");
+            if (nameNode != null)
+            {
+                XmlElement nameElement = (XmlElement)nameNode;
+                stepperName = nameElement.InnerText;
+
+                if (StepperDriversByName.ContainsKey(stepperName))
+                    return StepperDriversByIndex[StepperDriversByName[stepperName]];
+            }
+
             int index = 0;
             if (RunningPlatform() == Platform.Windows)
             { 
@@ -249,23 +260,16 @@ namespace GpioManagerObjects
             { 
                 index = StepperMotor.CreateFromXml(sequenceElement.OuterXml, stepperElement.OuterXml);
             }
-           
+
             //  the library created a stepper driver
             //  we need to parse the stepper element so we can create pin wrappers 
             //  required to hook to the joystick and user interace for all the pins used
             if (index >= 0)
             {
                 //  get the name info
-                string name = "";
-                XmlNode nameNode = stepperElement.SelectSingleNode("Name");
-                if (nameNode != null)
+                if (nameNode == null)
                 {
-                    XmlElement nameElement = (XmlElement)nameNode;
-                    name = nameElement.InnerText;
-                }
-                else
-                {
-                    name = string.Format("Step {0}", index.ToString());
+                    stepperName = string.Format("Step {0}", index.ToString());
                 }
 
                 //  parse pins info
@@ -328,9 +332,9 @@ namespace GpioManagerObjects
                 }
 
                 //  create a new stepper wrapper 
-                StepperWrapper newWrapper = new StepperWrapper(index, stepperPins, name);
+                StepperWrapper newWrapper = new StepperWrapper(index, stepperPins, stepperName);
                 StepperDriversByIndex[index] = newWrapper;
-                StepperDriversByName[name] = index;
+                StepperDriversByName[stepperName] = index;
 
                 //  done
                 return newWrapper;
@@ -692,6 +696,9 @@ namespace GpioManagerObjects
             {
                 XmlElement nameElement = (XmlElement)nameNode;
                 name = nameElement.InnerText;
+
+                if (HBridgeDriversByName.ContainsKey(name))
+                    return HBridgeDriversByName[name];
             }
             else
             {
@@ -755,6 +762,17 @@ namespace GpioManagerObjects
         public SevenSegDisplayWrapper CreateSevenSegDisplayDriver(XmlNode sevenSegDisplayElement)
         {
             int index = 0;
+            //  get the name info
+            string segDriverName = "";
+            XmlNode nameNode = sevenSegDisplayElement.SelectSingleNode("Name");
+            if (nameNode != null)
+            {
+                XmlElement nameElement = (XmlElement)nameNode;
+                segDriverName = nameElement.InnerText;
+
+                if (SevenSegDisplayDriversByName.ContainsKey(segDriverName))
+                    return SevenSegDisplayDriversByIndex[SevenSegDisplayDriversByName[segDriverName]];
+            }
 
             if (RunningPlatform() == Platform.Windows)
             {
@@ -771,17 +789,10 @@ namespace GpioManagerObjects
             //  required to hook to the joystick and user interace for all the pins used
             if (index >= 0)
             {
-                //  get the name info
-                string name = "";
-                XmlNode nameNode = sevenSegDisplayElement.SelectSingleNode("Name");
-                if (nameNode != null)
+                //  name this driver if necessary
+                if (nameNode == null)
                 {
-                    XmlElement nameElement = (XmlElement)nameNode;
-                    name = nameElement.InnerText;
-                }
-                else
-                {
-                    name = string.Format("ssd {0}", index.ToString());
+                    segDriverName = string.Format("ssd {0}", index.ToString());
                 }
 
                 //  parse pins info
@@ -842,9 +853,9 @@ namespace GpioManagerObjects
                 }
 
                 //  create a new seven seg display wrapper 
-                SevenSegDisplayWrapper newWrapper = new SevenSegDisplayWrapper(name, index, segPins);
+                SevenSegDisplayWrapper newWrapper = new SevenSegDisplayWrapper(segDriverName, index, segPins);
                 SevenSegDisplayDriversByIndex[index] = newWrapper;
-                SevenSegDisplayDriversByName[name] = index;
+                SevenSegDisplayDriversByName[segDriverName] = index;
 
                 //  done
                 return newWrapper;

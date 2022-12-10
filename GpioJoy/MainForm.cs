@@ -20,13 +20,14 @@ namespace GpioJoy
             InitializeComponent();
 
             _pinManager = pinManager;
-            gpioTab.InitializeGpioTab(_pinManager);
-
             _jsManager = jsManager;
-            _jsManager.OnStateChanged += JsManager_StateChanged;
-            joystickTab1.InitializeJoystickTab(_jsManager);
 
             LoadConfigurations();
+
+            gpioTab.InitializeGpioTab(_pinManager);
+
+            _jsManager.OnStateChanged += JsManager_StateChanged;
+            joystickTab1.InitializeJoystickTab(_jsManager);
 
             InitLabels();
             _jsManager.SetControlLabels();

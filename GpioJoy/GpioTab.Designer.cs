@@ -74,7 +74,6 @@
             this.labelPwmRange = new System.Windows.Forms.Label();
             this.textBoxPwmRange = new System.Windows.Forms.TextBox();
             this.labelPwmValue = new System.Windows.Forms.Label();
-            this.checkBoxEnableJs = new System.Windows.Forms.CheckBox();
             this.trackBarPwm = new System.Windows.Forms.TrackBar();
             this.radioButtonPwm = new System.Windows.Forms.RadioButton();
             this.checkBox37 = new System.Windows.Forms.CheckBox();
@@ -82,6 +81,7 @@
             this.checkBox39 = new System.Windows.Forms.CheckBox();
             this.checkBox40 = new System.Windows.Forms.CheckBox();
             this.BtnRefresh = new System.Windows.Forms.Button();
+            this.checkBoxEnableJs = new System.Windows.Forms.CheckBox();
             this.groupBoxPinDirection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPwm)).BeginInit();
             this.SuspendLayout();
@@ -836,17 +836,6 @@
             this.labelPwmValue.Text = "---";
             this.labelPwmValue.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // checkBoxEnableJs
-            // 
-            this.checkBoxEnableJs.AutoSize = true;
-            this.checkBoxEnableJs.Location = new System.Drawing.Point(8, 311);
-            this.checkBoxEnableJs.Name = "checkBoxEnableJs";
-            this.checkBoxEnableJs.Size = new System.Drawing.Size(147, 20);
-            this.checkBoxEnableJs.TabIndex = 47;
-            this.checkBoxEnableJs.Text = "Enable Joystick";
-            this.checkBoxEnableJs.UseVisualStyleBackColor = true;
-            this.checkBoxEnableJs.CheckedChanged += new System.EventHandler(this.checkBoxEnableJs_CheckedChanged);
-            // 
             // trackBarPwm
             // 
             this.trackBarPwm.LargeChange = 10;
@@ -950,6 +939,17 @@
             this.BtnRefresh.Text = "Refresh";
             this.BtnRefresh.UseVisualStyleBackColor = true;
             this.BtnRefresh.Click += new System.EventHandler(this.Refresh_Click);
+            // 
+            // checkBoxEnableJs
+            // 
+            this.checkBoxEnableJs.AutoSize = true;
+            this.checkBoxEnableJs.Location = new System.Drawing.Point(8, 311);
+            this.checkBoxEnableJs.Name = "checkBoxEnableJs";
+            this.checkBoxEnableJs.Size = new System.Drawing.Size(147, 20);
+            this.checkBoxEnableJs.TabIndex = 47;
+            this.checkBoxEnableJs.Text = "Enable Joystick";
+            this.checkBoxEnableJs.UseVisualStyleBackColor = true;
+            this.checkBoxEnableJs.CheckedChanged += new System.EventHandler(this.checkBoxEnableJs_CheckedChanged);
             // 
             // GpioTab
             // 
@@ -1056,7 +1056,6 @@
         private System.Windows.Forms.CheckBox checkBox40;
         private System.Windows.Forms.Button BtnRefresh;
         private System.Windows.Forms.Label labelPwmValue;
-        private System.Windows.Forms.CheckBox checkBoxEnableJs;
         private System.Windows.Forms.TrackBar trackBarPwm;
         private System.Windows.Forms.RadioButton radioButtonPwm;
         private System.Windows.Forms.TextBox textBoxPwmRange;
@@ -1064,5 +1063,6 @@
         private System.Windows.Forms.Button buttonSetPwmRange;
         private System.Windows.Forms.CheckBox checkBoxOnOff;
         private System.Windows.Forms.Button buttonCenterFreq;
+        private System.Windows.Forms.CheckBox checkBoxEnableJs;
     }
 }

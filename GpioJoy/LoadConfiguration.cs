@@ -221,7 +221,7 @@ namespace GpioJoy
                     }
                     else
                     {
-                        //  setup a new pin, hardware PWM on raspberry pi pin 12
+                        //  setup a new pin, hardware PWM on raspberry pi pin 12 - TODO JETSON make this number device aware for hardware PWM
                         newPin = new GpioPinWrapperJs(pinNumber, name, pinNumber == 12);
                     }
 
