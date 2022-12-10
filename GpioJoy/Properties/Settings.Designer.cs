@@ -22,17 +22,5 @@ namespace GpioJoy.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ControllerPath {
-            get {
-                return ((string)(this["ControllerPath"]));
-            }
-            set {
-                this["ControllerPath"] = value;
-            }
-        }
     }
 }

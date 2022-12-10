@@ -48,15 +48,6 @@ namespace GpioJoy
 
             //  setup the joystick disconnect message
             _jsManager.Joystick.JoystickDisconnectHandler += Joystick_JoystickDisconnectHandler;
-
-            if ( Properties.Settings.Default.ControllerPath.Length > 0 )
-            {
-                if (comboBoxJoystickPaths.Items.Contains(Properties.Settings.Default.ControllerPath))
-                {
-                    comboBoxJoystickPaths.SelectedItem = Properties.Settings.Default.ControllerPath;
-                    ConnectToController();
-                }
-            }
         }
 
         static string NoneFound = "none found";
@@ -138,17 +129,12 @@ namespace GpioJoy
                 buttonConnectJoystick.Text = "Disconnect";
                 comboBoxJoystickPaths.Enabled = false;
                 buttonRefresh.Visible = false;
-
-                Properties.Settings.Default.ControllerPath = (string)comboBoxJoystickPaths.SelectedItem;
-                Properties.Settings.Default.Save();
-
             }
             else
             {
                 comboBoxJoystickPaths.Enabled = true;
                 buttonRefresh.Visible = true;
                 buttonConnectJoystick.Text = "Connect";
-
             }
         }
 
