@@ -131,10 +131,10 @@
     <Content Include="Config\SampleConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Config\SevenSegmentDisplayConfig.xml">
+    <Content Include="Config\SevSegDisplay.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Config\StepperSampleConfig.xml">
+    <Content Include="Config\StepperMotor.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -109,7 +109,12 @@ namespace GpioJoy
                         continue;
                     baseNumber = Int32.Parse(baseNode.InnerText);
 
-                    pinManager.SetupMcp(type, baseNumber, address);
+                    int bus = 1;
+                    var busNode = nextMcp.SelectSingleNode("Bus");
+                    if (busNode != null)
+                        bus = Int32.Parse(busNode.InnerText);
+                    
+                    pinManager.SetupMcp(type, bus, baseNumber, address);
                 }
                 catch
                 {
@@ -151,7 +156,12 @@ namespace GpioJoy
                         continue;
                     frequency = Int32.Parse(freqNode.InnerText);
 
-                    pinManager.SetupPca(baseNumber, address, frequency);
+                    int bus = 1;
+                    var busNode = nextMcp.SelectSingleNode("Bus");
+                    if (busNode != null)
+                        bus = Int32.Parse(busNode.InnerText);
+
+                    pinManager.SetupPca(bus, baseNumber, address, frequency);
                 }
                 catch
                 {
@@ -190,10 +200,10 @@ namespace GpioJoy
                 }
 
                 //  Pin name (optional)
-                string name = "Pin " + pinNumber.ToString();
-                XmlNode nameNode = nextPin.SelectSingleNode("Name");
+                string displayName = "";
+                XmlNode nameNode = nextPin.SelectSingleNode("DisplayName");
                 if (nameNode != null)
-                    name = nameNode.InnerText;
+                    displayName = nameNode.InnerText;
 
                 //  Pin Mode
                 //  <Mode>
@@ -217,12 +227,12 @@ namespace GpioJoy
                     if (pinManager.IsPcaPin(pinNumber))
                     {
                         //  setup a new PCA pin, hardware PWM
-                        newPin = new GpioPinWrapperPcaJs(pinNumber, name, true);
+                        newPin = new GpioPinWrapperPcaJs(pinNumber, displayName, true);
                     }
                     else
                     {
                         //  setup a new pin, hardware PWM on raspberry pi pin 12 - TODO JETSON make this number device aware for hardware PWM
-                        newPin = new GpioPinWrapperJs(pinNumber, name, pinNumber == 12);
+                        newPin = new GpioPinWrapperJs(pinNumber, displayName, pinNumber == 12);
                     }
 
                     //  initialize this pin in the pin manager
@@ -299,11 +309,11 @@ namespace GpioJoy
                                 {
                                     servoWrapper = pinManager.CreateServoDriver(newPin);
                                 }
-                                newInput = jsManager.AddJoystickAssignment(configName, form, servoWrapper, direction, assignment);
+                                newInput = jsManager.AddJoystickAssignment(configName, form, servoWrapper, displayName, direction, assignment);
                             }
                             else
                             {
-                                newInput = jsManager.AddJoystickAssignment(configName, form, newPin, name, assignment, scale, reverse);
+                                newInput = jsManager.AddJoystickAssignment(configName, form, newPin, displayName, assignment, scale, reverse);
                             }
                         }
                     }
@@ -340,6 +350,14 @@ namespace GpioJoy
 
                 if (newHBridge != null)
                 {
+                    string displayName = "";
+                    XmlNode displayNameNode = nextHBridge.SelectSingleNode("DisplayName");
+                    if (displayNameNode != null)
+                    {
+                        XmlElement displayNameElement = (XmlElement)displayNameNode;
+                        displayName = displayNameElement.InnerText;
+                    }
+
                     //  Map to joystick input
                     //  <Joystick>
                     XmlNodeList joystickNodes = nextHBridge.SelectNodes("Joystick");
@@ -361,7 +379,7 @@ namespace GpioJoy
                             if (scaleText != null && scaleText.Length > 0)
                                 scale = double.Parse(scaleText);
 
-                            jsManager.AddJoystickAssignment(configName, form, newHBridge, dir, assignment, scale);
+                            jsManager.AddJoystickAssignment(configName, form, newHBridge, displayName, dir, assignment, scale);
                         }
                     }
                     catch (Exception e)
@@ -413,6 +431,14 @@ namespace GpioJoy
 
                 if (newStepperDriver != null)
                 {
+                    string displayName = "";
+                    XmlNode displayNameNode = nextStepper.SelectSingleNode("DisplayName");
+                    if (displayNameNode != null)
+                    {
+                        XmlElement displayNameElement = (XmlElement)displayNameNode;
+                        displayName = displayNameElement.InnerText;
+                    }
+
                     //  Map to joystick input
                     //  <Joystick>
                     XmlNodeList joystickNodes = nextStepper.SelectNodes("Joystick");
@@ -430,7 +456,7 @@ namespace GpioJoy
                             int dir = Int32.Parse(dirText);
                             dir = (dir > 0 ? 1 : -1);
 
-                            jsManager.AddJoystickAssignment(configName, form, newStepperDriver, dir, assignment);
+                            jsManager.AddJoystickAssignment(configName, form, newStepperDriver, displayName, dir, assignment);
                         }
                     }
                     catch (Exception e)
@@ -468,6 +494,14 @@ namespace GpioJoy
 
                 if ( newSevenSegDisplay != null )
                 {
+                    string displayName = "";
+                    XmlNode displayNameNode = nextDisplay.SelectSingleNode("DisplayName");
+                    if (displayNameNode != null)
+                    {
+                        XmlElement displayNameElement = (XmlElement)displayNameNode;
+                        displayName = displayNameElement.InnerText;
+                    }
+
                     //  Map to joystick input
                     //  <Joystick>
                     XmlNodeList joystickNodes = nextDisplay.SelectNodes("Joystick");
@@ -485,7 +519,7 @@ namespace GpioJoy
                             int dir = Int32.Parse(dirText);
                             dir = (dir > 0 ? 1 : -1);
 
-                            jsManager.AddJoystickAssignment(configName, form, newSevenSegDisplay, dir, assignment);
+                            jsManager.AddJoystickAssignment(configName, form, newSevenSegDisplay, displayName, dir, assignment);
                         }
                     }
                     catch (Exception e)
@@ -525,6 +559,7 @@ namespace GpioJoy
         /// Load user assemblies for function assignments
         /// </summary>
         public static Dictionary<string, Assembly> LoadedAssemblies = new Dictionary<string, Assembly>();
+        public static Dictionary<string, Dictionary<string, List<string>>> LoadedAssembliesSetupFunctionsCalled = new Dictionary<string, Dictionary<string, List<string>>>();
 
 
         /// <summary>
@@ -557,10 +592,20 @@ namespace GpioJoy
                     {
                         var assembly = Assembly.LoadFrom(nameNode.InnerText);
                         LoadedAssemblies.Add(nameNode.InnerText, assembly);
-
-                        CallSetupMethods(nextAssembly, assembly);
                     }
                     catch ( Exception e)
+                    {
+                        Console.WriteLine($"Unable to load assembly {nameNode.InnerText}:  {e}");
+                    }
+                }
+
+                if (LoadedAssemblies.ContainsKey(nameNode.InnerText))
+                {
+                    try
+                    {
+                        CallSetupMethods(nameNode.InnerText, nextAssembly, LoadedAssemblies[nameNode.InnerText]);
+                    }
+                    catch (Exception e)
                     {
                         Console.WriteLine($"Unable to load assembly {nameNode.InnerText}:  {e}");
                     }
@@ -572,7 +617,7 @@ namespace GpioJoy
         /// <summary>
         /// Call setup methods for loaded assemblies
         /// </summary>
-        static void CallSetupMethods(XmlNode assemblyNode, Assembly assembly)
+        static void CallSetupMethods(string assemblyName, XmlNode assemblyNode, Assembly assembly)
         {
             var setupNodes = assemblyNode.SelectNodes("Setup");
             foreach (XmlNode nextSetupFn in setupNodes)
@@ -582,6 +627,19 @@ namespace GpioJoy
                 if (setupClass == null || setupFunction == null)
                 {
                     Console.WriteLine($"No setup class for setup function {nextSetupFn.InnerText}");
+                    continue;
+                }
+
+                if ( ! LoadedAssembliesSetupFunctionsCalled.ContainsKey(assemblyName) )
+                {
+                    LoadedAssembliesSetupFunctionsCalled.Add(assemblyName, new Dictionary<string, List<string>>());
+                }
+
+                var assemblySetupFunctions = LoadedAssembliesSetupFunctionsCalled[assemblyName];
+
+                if ( assemblySetupFunctions.ContainsKey(setupClass)  && assemblySetupFunctions[setupClass].Contains(setupFunction) )
+                {
+                    Console.WriteLine($"Skipping {setupClass} {setupFunction} because it has been called already.");
                     continue;
                 }
 
@@ -596,6 +654,10 @@ namespace GpioJoy
                 try
                 {
                     method.Invoke(null, null);
+                    if (!assemblySetupFunctions.ContainsKey(setupClass))
+                        assemblySetupFunctions.Add(setupClass, new List<string>() { setupFunction });
+                    else
+                        assemblySetupFunctions[setupClass].Add(setupFunction);
                 }
                 catch (Exception e)
                 {
@@ -638,15 +700,14 @@ namespace GpioJoy
                                 continue;
                             foreach (XmlNode nextJsNode in joystickNodes)
                             {
-                                string fnName = "";
-                                XmlElement nameElement = (XmlElement)nextFunction.SelectSingleNode("Name");
+                                string displayName = "";
+                                XmlElement nameElement = (XmlElement)nextFunction.SelectSingleNode("DisplayName");
                                 if (nameElement != null)
-                                    fnName = nameElement.InnerText;
-                                else
-                                    fnName = method.Name;
+                                    displayName = nameElement.InnerText;
+                                
 
                                 var assignment = (JoystickControl)Enum.Parse(typeof(JoystickControl), nextJsNode.InnerText);
-                                jsManager.AddFunctionAssignment(configName, fnName, form, assignment, method);
+                                jsManager.AddFunctionAssignment(configName, displayName, form, assignment, method);
                             }
                         }
                     }

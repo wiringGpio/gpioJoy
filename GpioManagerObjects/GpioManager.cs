@@ -50,9 +50,7 @@ namespace GpioManagerObjects
     /// also wraps up pin handling in ifdef so you can compile and run on windows with dummy pin objects
     /// </summary>
     public class GpioManager
-    {
-        const int I2CBus = 1;
-
+    {   
         // Public Events
         //
 
@@ -73,7 +71,7 @@ namespace GpioManagerObjects
         /// <param name="baseNumber">base number for pin indices</param>
         /// <param name="address">address on i2C bus, use decimal number (not hex)</param>
         /// <returns></returns>
-        public int SetupMcp(Mcp230xxType type, int baseNumber, int address)
+        public int SetupMcp(Mcp230xxType type, int bus,  int baseNumber, int address)
         {
             if (RunningPlatform() == Platform.Windows)
             {
@@ -100,7 +98,7 @@ namespace GpioManagerObjects
             {
                 case Mcp230xxType.Mcp23008:
                     {
-                        int fd = DeviceI2CExtensions.Mcp23008Setup(I2CBus, baseNumber, address);
+                        int fd = DeviceI2CExtensions.Mcp23008Setup(bus, baseNumber, address);
                         if (fd >= 0)
                             McpChips.Add(baseNumber, address);
                         return fd;
@@ -108,7 +106,7 @@ namespace GpioManagerObjects
 
                 case Mcp230xxType.Mcp23017:
                     {
-                        int fd = DeviceI2CExtensions.Mcp23017Setup(I2CBus, baseNumber, address);
+                        int fd = DeviceI2CExtensions.Mcp23017Setup(bus, baseNumber, address);
                         if (fd >= 0)
                             McpChips.Add(baseNumber, address);
                         return fd;
@@ -128,7 +126,7 @@ namespace GpioManagerObjects
         /// <param name="address">address on i2C buss, use decimal number</param>
         /// <param name="frequency">PWM frequency </param>
         /// <returns></returns>
-        public int SetupPca(int baseNumber, int address, float frequency)
+        public int SetupPca(int bus, int baseNumber, int address, float frequency)
         {
             if (RunningPlatform() == Platform.Windows)
             {
@@ -151,7 +149,7 @@ namespace GpioManagerObjects
                     return -1;
             }
 
-            int fd = DeviceI2CExtensions.Pca9685Setup(1, baseNumber, address, frequency);
+            int fd = DeviceI2CExtensions.Pca9685Setup(bus, baseNumber, address, frequency);
             if (fd >= 0)
             {
                 PcaChips.Add(baseNumber, address);
@@ -707,7 +705,6 @@ namespace GpioManagerObjects
             }
 
             HBridgeWrapper newWrapper = new HBridgeWrapper(pwmPin, polarityPositivePin, polarityNegativePin, name);
- 
             HBridgeDriversByName[name] = newWrapper;
             return newWrapper;
         }
@@ -1047,28 +1044,21 @@ namespace GpioManagerObjects
         //Function to turn off all pins
         public void AllOff()
         {
-            int setPin = 1;
-            while (setPin <= 40)
+            try
             {
-                try
+                foreach (var nextPin in Pins)
                 {
-                    GpioPinWrapper findPin;
-                    Pins.TryGetValue(setPin, out findPin);
-
-                    if (findPin.Mode == PinMode.PWMOutput)
-                        findPin.PwmSetValue(0.0);
+                    if (nextPin.Value.Mode == PinMode.PWMOutput)
+                        nextPin.Value.PwmSetValue(0.0);
                     else
-                        findPin.Write(0);
+                        nextPin.Value.Write(0);
 
-                    GpioEvents?.Invoke(this, new GpioEventArgs(findPin.PinNumber));
-
+                    GpioEvents?.Invoke(this, new GpioEventArgs(nextPin.Value.PinNumber));
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"This pin does not exist: {e}");
-                }
-
-                setPin = setPin + 1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"This pin does not exist: {e}");
             }
         }
 

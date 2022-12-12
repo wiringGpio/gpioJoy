@@ -110,7 +110,7 @@ namespace GpioJoy
         /// </summary>
         public virtual void SetupControlUi()
         {
-            if ( UiLabel != null )
+            if ( UiLabel != null && Name.Length > 0 )
                 UiLabel.Text = Name;
             if(UiControl != null)
                 UiControl.Enabled = true;
@@ -140,9 +140,6 @@ namespace GpioJoy
 
         protected TrackBar _trackBarControl;
 
-        public override string Name => _name;
-
-
         /// <summary>
         /// Stick Positive returns true if the vector for this stick direction is > 0
         /// </summary>
@@ -154,10 +151,10 @@ namespace GpioJoy
                 {
                     case JoystickControl.LeftStickUp:
                     case JoystickControl.LeftStickRight:
-                    //case JoystickControl.LeftTrigger:
+                    case JoystickControl.LeftTrigger:
                     case JoystickControl.RightStickUp:
                     case JoystickControl.RightStickRight:
-                    //case JoystickControl.RightTrigger:
+                    case JoystickControl.RightTrigger:
                         return true;
 
                     default:
@@ -220,13 +217,33 @@ namespace GpioJoy
                 {
                     try
                     {
-                        _trackBarControl.Value = ReverseValue ? value * -1 : value;
+                        int setValue = ReverseValue ? value * -1 : value;
+                        if (setValue > _trackBarControl.Maximum)
+                            setValue = _trackBarControl.Maximum;
+                        else if (setValue < _trackBarControl.Minimum)
+                            setValue = _trackBarControl.Minimum;
+
+                        _trackBarControl.Value = setValue;
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine($"ProcessInputUi exception: {e}");
                     }
                 });
+            }
+        }
+
+        /// <summary>
+        /// Mouse up
+        /// </summary>
+        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (Active)
+            {
+                if (_trackBarControl.Value > 0)
+                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
+                else
+                    ProcessInput((double)(ReverseValue ? _trackBarControl.Value * -1 : _trackBarControl.Value) / (double)(_trackBarControl.Minimum * -1), false);
             }
         }
     }
@@ -282,21 +299,6 @@ namespace GpioJoy
                
             }
         }
-
-
-        /// <summary>
-        /// Mouse up
-        /// </summary>
-        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (Active)
-            {
-                if (_trackBarControl.Value > 0)
-                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
-                else
-                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
-            }
-        }
     }
 
 
@@ -310,16 +312,16 @@ namespace GpioJoy
         /// <summary>
         /// Constructor
         /// </summary>
-        public JoystickStepperStickInput(StepperWrapper stepper, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
+        public JoystickStepperStickInput(StepperWrapper stepper, int direction, string displayName, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
             _direction = direction;
             _stepper = stepper;
+            _name = displayName;
         }
 
         StepperWrapper _stepper;
 
-        public override string Name { get { return _stepper != null ? _stepper.Name : ""; } }
-
+        
         /// <summary>
         /// Enable pins
         /// </summary>
@@ -376,20 +378,6 @@ namespace GpioJoy
             }
         }
 
-
-        /// <summary>
-        /// Mouse up
-        /// </summary>
-        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (Active)
-            {
-                if (_trackBarControl.Value > 0)
-                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
-                else
-                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
-            }
-        }
     }
 
 
@@ -403,17 +391,16 @@ namespace GpioJoy
         /// <summary>
         /// Constructor
         /// </summary>
-        public JoystickHBridgeStickInput(HBridgeWrapper hbridge, int direction, Control label, TrackBar control, JoystickControl assignment, double scale) : base(label, control, assignment)
+        public JoystickHBridgeStickInput(HBridgeWrapper hbridge, int direction, string displayName, Control label, TrackBar control, JoystickControl assignment, double scale) : base(label, control, assignment)
         {
             _direction = direction;
 
             _hBridge = hbridge;
             _pwmScale = scale;
+            _name = displayName;
         }
 
         HBridgeWrapper _hBridge;
-
-        public override string Name { get { return _hBridge != null ? _hBridge.Name : ""; } }
 
 
         /// <summary>
@@ -471,19 +458,6 @@ namespace GpioJoy
         }
 
 
-        /// <summary>
-        /// Mouse up
-        /// </summary>
-        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (Active)
-            {
-                if (_trackBarControl.Value > 0)
-                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
-                else
-                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
-            }
-        }
     }
 
 
@@ -497,10 +471,11 @@ namespace GpioJoy
         /// <summary>
         /// Constructor
         /// </summary>
-        public JoystickServoStickInput(ServoWrapper servo, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
+        public JoystickServoStickInput(ServoWrapper servo, int direction, string displayName, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
             _direction = direction;
             _servo = servo;
+            _name = displayName;
         }
 
         ServoWrapper _servo;
@@ -544,20 +519,6 @@ namespace GpioJoy
             }
         }
 
-
-        /// <summary>
-        /// Mouse up
-        /// </summary>
-        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (Active)
-            {
-                if (_trackBarControl.Value > 0)
-                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
-                else
-                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum*-1), false);
-            }
-        }
     }
 
 
@@ -571,18 +532,17 @@ namespace GpioJoy
         /// <summary>
         /// Constructor
         /// </summary>
-        public JoystickSevenSegDisplay(SevenSegDisplayWrapper display, int direction, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
+        public JoystickSevenSegDisplay(SevenSegDisplayWrapper display, int direction, string displayName, Control label, TrackBar control, JoystickControl assignment) : base(label, control, assignment)
         {
             _direction = direction;
             _display = display;
+            _name = displayName;
         }
 
         // Index of display in wiringPiExtension
         SevenSegDisplayWrapper _display;
 
-        public override string Name { get { return _display != null ? _display.Name : ""; } }
-
-        /// <summary>
+          /// <summary>
         /// Process Input
         /// </summary>
         public override void ProcessInput(double input, bool updateUi)
@@ -613,17 +573,6 @@ namespace GpioJoy
                         displayValue *= -1;
                     _display.Set(displayValue.ToString());
                 }
-            }
-        }
-        
-        public override void UiControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (Active)
-            {
-                if (_trackBarControl.Value > 0)
-                    ProcessInput((double)_trackBarControl.Value / (double)_trackBarControl.Maximum, false);
-                else
-                    ProcessInput((double)_trackBarControl.Value / (double)(_trackBarControl.Minimum * -1), false);
             }
         }
     }
@@ -681,7 +630,6 @@ namespace GpioJoy
         {
             if (Active)
             {
-                //Console.WriteLine("Mouse Down " + Control.Text + " " + CurrentButtonValue.ToString());
                 if (CurrentButtonValue != true)
                     ProcessInput(true, false);
             }
@@ -692,7 +640,6 @@ namespace GpioJoy
         {
             if (Active)
             {
-                //Console.WriteLine("Mouse Up " + Control.Text + " " + CurrentButtonValue.ToString());
                 if (CurrentButtonValue != false)
                     ProcessInput(false, false);
             }

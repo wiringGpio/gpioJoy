@@ -13,55 +13,111 @@ namespace GpioDemoBoardUserFunctions
     {
         //  Initialization
         #region Initialization
-        static List<GpioPinWrapper> XBoxModelPinsLeftSide;
-        static List<GpioPinWrapper> XBoxModelPinsRightSide;
-        static List<GpioPinWrapper> XBoxModelPinsHomeRow;
-        static List<GpioPinWrapper> XBoxModelPins
+
+        /// <summary>
+        /// Init function for servo config
+        /// </summary>
+        static public void InitServosConfig()
         {
-            get
-            {
-                var list = new List<GpioPinWrapper>();
-                list.AddRange(XBoxModelPinsLeftSide);
-                list.AddRange(XBoxModelPinsRightSide);
-                list.AddRange(XBoxModelPinsHomeRow);
-                return list;
-            }
+            Console.WriteLine("InitServosConfig");
+
+            if (ServoOne == null)
+                ServoOne = PinManager.GetServoDriver(500);
+
+            if ( ServoTwo == null)
+                ServoTwo = PinManager.GetServoDriver(501);
+
+            if (BoardDisplayDriver == null)
+                BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
         }
 
-        static SevenSegDisplayWrapper BoardDisplayDriver;
-        static SevenSegDisplayWrapper RemoteDisplayDriver;
-        static ServoWrapper ServoOne;
-        static ServoWrapper ServoTwo;
-        static HBridgeWrapper Motor2;
-        static HBridgeWrapper MotorNxt;
-        static GpioPinWrapper Motor1;
-        static StepperWrapper Stepper1;
-        static StepperWrapper Stepper2;
-        static GpioPinWrapper RedPin;
-        static GpioPinWrapper GreenPin;
-        static GpioPinWrapper BluePin;
 
-        static GpioManager PinManager => GpioJoyProgram.PinManager;
-
-        static public void InitXBoxModelPins()
+        /// <summary>
+        /// Init function for motors config
+        /// </summary>
+        static public void InitSetpperMotorsConfig()
         {
-            Console.WriteLine("Init XBox  Model Pins");
+            if (Stepper1 == null)
+                Stepper1 = PinManager.GetStepperDriver("StepperOne");
 
-            BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
-            RemoteDisplayDriver = PinManager.GetSevenSegDisplayDriver("RemoteSevenSeg");
+            if (Stepper2 == null)
+                Stepper2 = PinManager.GetStepperDriver("StepperTwo");
 
-            ServoOne = PinManager.GetServoDriver(500);
-            ServoTwo = PinManager.GetServoDriver(501);
-            Motor1 = PinManager.GetPin(405);
-            Motor2 = PinManager.GetHBridgeDriver("Motor Two");
-            MotorNxt = PinManager.GetHBridgeDriver("Motor NXT");
+            if (BoardDisplayDriver == null)
+                BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
+        }
 
-            Stepper1 = PinManager.GetStepperDriver("Stepper One");
-            Stepper2 = PinManager.GetStepperDriver("Stepper Two");
 
-            RedPin = PinManager.GetPin(513);
-            GreenPin = PinManager.GetPin(514);
-            BluePin = PinManager.GetPin(515);
+        static public void InitMotorsConfig()
+        {
+            if (BoardDisplayDriver == null)
+                BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
+
+            if (Motor1 == null)
+                Motor1 = PinManager.GetPin(405);
+
+            if (Motor2 == null)
+                Motor2 = PinManager.GetHBridgeDriver("MotorTwo");
+
+            if (MotorNxt == null)
+                MotorNxt = PinManager.GetHBridgeDriver("MotorNXT");
+        }
+
+        /// <summary>
+        /// Init function for rgb config
+        /// </summary>
+        static public void InitRgbConfig()
+        {
+            Console.WriteLine("InitRgbConfig");
+
+            if (BoardDisplayDriver == null)
+                BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
+
+            if (RedPin == null)
+                RedPin = PinManager.GetPin(513);
+
+            if ( GreenPin == null)
+                GreenPin = PinManager.GetPin(514);
+
+            if ( BluePin == null )
+                BluePin = PinManager.GetPin(515);
+        }
+
+
+        /// <summary>
+        /// Init function for Gpio Demo Board config
+        /// </summary>
+        static public void InitGpioDemoBoardConfig()
+        {
+            Console.WriteLine("InitGpioDemoBoardConfig");
+
+            if ( BoardDisplayDriver == null )
+                BoardDisplayDriver = PinManager.GetSevenSegDisplayDriver("BoardSevenSeg");
+            
+            if ( RemoteDisplayDriver == null )
+                RemoteDisplayDriver = PinManager.GetSevenSegDisplayDriver("RemoteSevenSeg");
+
+            if ( ServoOne == null )
+                ServoOne = PinManager.GetServoDriver(500);
+
+            if (ServoTwo == null)
+                ServoTwo = PinManager.GetServoDriver(501);
+
+            if ( Motor1 == null)
+                Motor1 = PinManager.GetPin(405);
+
+            if ( Motor2 == null)
+                Motor2 = PinManager.GetHBridgeDriver("MotorTwo");
+            
+            if ( MotorNxt == null )
+                MotorNxt = PinManager.GetHBridgeDriver("MotorNXT");
+
+            if ( Stepper1 == null)
+                Stepper1 = PinManager.GetStepperDriver("StepperOne");
+            
+            if ( Stepper2 == null )
+                Stepper2 = PinManager.GetStepperDriver("StepperTwo");
+
 
             XBoxModelPinsLeftSide = new List<GpioPinWrapper>();
             XBoxModelPinsRightSide = new List<GpioPinWrapper>();
@@ -97,10 +153,39 @@ namespace GpioDemoBoardUserFunctions
             XBoxModelPinsHomeRow.Add(PinManager.GetPin(213));      //  start
         }
 
-
-
-
         #endregion
+
+
+        static List<GpioPinWrapper> XBoxModelPinsLeftSide;
+        static List<GpioPinWrapper> XBoxModelPinsRightSide;
+        static List<GpioPinWrapper> XBoxModelPinsHomeRow;
+        static List<GpioPinWrapper> XBoxModelPins
+        {
+            get
+            {
+                var list = new List<GpioPinWrapper>();
+                list.AddRange(XBoxModelPinsLeftSide);
+                list.AddRange(XBoxModelPinsRightSide);
+                list.AddRange(XBoxModelPinsHomeRow);
+                return list;
+            }
+        }
+
+        static SevenSegDisplayWrapper BoardDisplayDriver;
+        static SevenSegDisplayWrapper RemoteDisplayDriver;
+        static ServoWrapper ServoOne;
+        static ServoWrapper ServoTwo;
+        static HBridgeWrapper Motor2;
+        static HBridgeWrapper MotorNxt;
+        static GpioPinWrapper Motor1;
+        static StepperWrapper Stepper1;
+        static StepperWrapper Stepper2;
+        static GpioPinWrapper RedPin;
+        static GpioPinWrapper GreenPin;
+        static GpioPinWrapper BluePin;
+
+        static GpioManager PinManager => GpioJoyProgram.PinManager;
+
 
         //  Servo Functions
         //

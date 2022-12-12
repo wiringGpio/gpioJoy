@@ -463,150 +463,157 @@ namespace GpioJoy
                 }
             }
 
-            if (_currentFunctionAssignments != null)
+            try
             {
-                // now do the function assignments
-                foreach (var nextFnAssignment in _currentFunctionAssignments)
+                if (_currentFunctionAssignments != null)
                 {
-                    switch (nextFnAssignment.Key)
+                    // now do the function assignments
+                    foreach (var nextFnAssignment in _currentFunctionAssignments)
                     {
-                        case JoystickControl.LeftStickUp:
-                        case JoystickControl.LeftStickDown:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.LeftStick.Y });
-                            }
-                            break;
-                        case JoystickControl.LeftStickRight:
-                        case JoystickControl.LeftStickLeft:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.LeftStick.X });
-                            }
-                            break;
+                        switch (nextFnAssignment.Key)
+                        {
+                            case JoystickControl.LeftStickUp:
+                            case JoystickControl.LeftStickDown:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.LeftStick.Y });
+                                }
+                                break;
+                            case JoystickControl.LeftStickRight:
+                            case JoystickControl.LeftStickLeft:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.LeftStick.X });
+                                }
+                                break;
 
-                        case JoystickControl.LeftTrigger:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.LeftTrigger });
-                            }
-                            break;
+                            case JoystickControl.LeftTrigger:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.LeftTrigger });
+                                }
+                                break;
 
-                        case JoystickControl.RightStickUp:
-                        case JoystickControl.RightStickDown:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.RightStick.Y });
-                            }
-                            break;
+                            case JoystickControl.RightStickUp:
+                            case JoystickControl.RightStickDown:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.RightStick.Y });
+                                }
+                                break;
 
-                        case JoystickControl.RightStickRight:
-                        case JoystickControl.RightStickLeft:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.RightStick.X });
-                            }
-                            break;
+                            case JoystickControl.RightStickRight:
+                            case JoystickControl.RightStickLeft:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.RightStick.X });
+                                }
+                                break;
 
-                        case JoystickControl.RightTrigger:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.RightTrigger });
-                            }
-                            break;
-                        //
-                        case JoystickControl.ABtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.ABtn });
-                            }
-                            break;
-                        case JoystickControl.BBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.BBtn });
-                            }
-                            break;
-                        case JoystickControl.XBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.XBtn });
-                            }
-                            break;
-                        case JoystickControl.YBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.YBtn });
-                            }
-                            break;
-                        case JoystickControl.LeftBumper:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.LeftBumper });
-                            }
-                            break;
-                        case JoystickControl.RightBumper:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.RightBumper });
-                            }
-                            break;
-                        case JoystickControl.BackBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.BackBtn });
-                            }
-                            break;
-                        case JoystickControl.StartBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.StartBtn });
-                            }
-                            break;
-                        case JoystickControl.HomeBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.HomeBtn });
-                            }
-                            break;
-                        case JoystickControl.LeftStickBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.LeftStickBtn });
-                            }
-                            break;
-                        case JoystickControl.RightStickBtn:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.RightStickBtn });
-                            }
-                            break;
-                        case JoystickControl.DpadUp:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.DpadUp });
-                            }
-                            break;
-                        case JoystickControl.DpadDown:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.DpadDown });
-                            }
-                            break;
-                        case JoystickControl.DpadLeft:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.DpadLeft });
-                            }
-                            break;
-                        case JoystickControl.DpadRight:
-                            foreach (var nextFn in nextFnAssignment.Value)
-                            {
-                                nextFn.Method.Invoke(this, new object[] { e.Data.DpadRight });
-                            }
-                            break;
+                            case JoystickControl.RightTrigger:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.RightTrigger });
+                                }
+                                break;
+                            //
+                            case JoystickControl.ABtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.ABtn });
+                                }
+                                break;
+                            case JoystickControl.BBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.BBtn });
+                                }
+                                break;
+                            case JoystickControl.XBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.XBtn });
+                                }
+                                break;
+                            case JoystickControl.YBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.YBtn });
+                                }
+                                break;
+                            case JoystickControl.LeftBumper:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.LeftBumper });
+                                }
+                                break;
+                            case JoystickControl.RightBumper:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.RightBumper });
+                                }
+                                break;
+                            case JoystickControl.BackBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.BackBtn });
+                                }
+                                break;
+                            case JoystickControl.StartBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.StartBtn });
+                                }
+                                break;
+                            case JoystickControl.HomeBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.HomeBtn });
+                                }
+                                break;
+                            case JoystickControl.LeftStickBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.LeftStickBtn });
+                                }
+                                break;
+                            case JoystickControl.RightStickBtn:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.RightStickBtn });
+                                }
+                                break;
+                            case JoystickControl.DpadUp:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.DpadUp });
+                                }
+                                break;
+                            case JoystickControl.DpadDown:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.DpadDown });
+                                }
+                                break;
+                            case JoystickControl.DpadLeft:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.DpadLeft });
+                                }
+                                break;
+                            case JoystickControl.DpadRight:
+                                foreach (var nextFn in nextFnAssignment.Value)
+                                {
+                                    nextFn.Method.Invoke(this, new object[] { e.Data.DpadRight });
+                                }
+                                break;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error invoking joystick function: {ex}.");
             }
         }
 
@@ -668,7 +675,7 @@ namespace GpioJoy
         /// <summary>
         /// Create a StepperWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
-        public JoystickInput AddJoystickAssignment(string configName, MainForm form, StepperWrapper stepper, int direction, JoystickControl assignment)
+        public JoystickInput AddJoystickAssignment(string configName, MainForm form, StepperWrapper stepper, string displayName, int direction, JoystickControl assignment)
         {
             JoystickInput newInput = null;
 
@@ -685,7 +692,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
                     //  create a new input for this stick (vector) assignment
-                    newInput = new JoystickStepperStickInput(stepper, direction, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
+                    newInput = new JoystickStepperStickInput(stepper, direction, displayName, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
                     //  add the assignment to all pins used for this stepper motor
                     foreach (var nextPin in stepper.Pins)
                     {
@@ -721,7 +728,7 @@ namespace GpioJoy
         /// <summary>
         /// Create a HBridgeWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
-        public JoystickInput AddJoystickAssignment(string configName, MainForm form, HBridgeWrapper hbridge, int direction, JoystickControl assignment, double scale = 1.0)
+        public JoystickInput AddJoystickAssignment(string configName, MainForm form, HBridgeWrapper hbridge, string displayName, int direction, JoystickControl assignment, double scale = 1.0)
         {
             JoystickInput newInput = null;
 
@@ -738,7 +745,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
                     //  create a new input for this stick (vector) assignment
-                    newInput = new JoystickHBridgeStickInput(hbridge, direction, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment, scale);
+                    newInput = new JoystickHBridgeStickInput(hbridge, direction, displayName, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment, scale);
                     //  add the assignment to all pins used for this stepper motor
                     foreach (var nextPin in hbridge.Pins)
                     {
@@ -774,7 +781,7 @@ namespace GpioJoy
         /// <summary>
         /// Create a ServoWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
-        public JoystickInput AddJoystickAssignment(string configName, MainForm form, ServoWrapper servo, int direction, JoystickControl assignment)
+        public JoystickInput AddJoystickAssignment(string configName, MainForm form, ServoWrapper servo, string displayName, int direction, JoystickControl assignment)
         {
             JoystickInput newInput = null;
 
@@ -791,7 +798,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
                     //  create a new input for this stick (vector) assignment
-                    newInput = new JoystickServoStickInput(servo, direction, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
+                    newInput = new JoystickServoStickInput(servo, direction, displayName, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
                     //  add the assignment to all pins used for this stepper motor
                     var pin = (GpioPinWrapperJs)servo.Pin;
                     pin.AddJoystickAssignment(newInput);
@@ -824,7 +831,7 @@ namespace GpioJoy
         /// <summary>
         /// Create a SevenSegDisplayWrapper joystick assignment object, and connect it to the right control on the UI form
         /// </summary>
-        public JoystickInput AddJoystickAssignment(string configName, MainForm form, SevenSegDisplayWrapper display, int direction, JoystickControl assignment)
+        public JoystickInput AddJoystickAssignment(string configName, MainForm form, SevenSegDisplayWrapper display, string displayName, int direction, JoystickControl assignment)
         {
             JoystickInput newInput = null;
 
@@ -841,7 +848,7 @@ namespace GpioJoy
                 case JoystickControl.RightStickLeft:
                 case JoystickControl.RightTrigger:
                     //  create a new input for this stick (vector) assignment
-                    newInput = new JoystickSevenSegDisplay(display, direction, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
+                    newInput = new JoystickSevenSegDisplay(display, direction, displayName, form.GetLabelForStickAssignment(assignment), form.GetControlForStickAssignment(assignment), assignment);
                     //  add the assignment to all pins used for this seven segment display
                     foreach (var nextPin in display.Pins)
                     {

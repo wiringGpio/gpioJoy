@@ -15,9 +15,6 @@ namespace GpioManagerObjects
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pwmPin">GPIO Pin wrapper already created for the PWM pin</param>
-        /// <param name="polarityPositivePin">GPIO pin wrapper for the positive polarity pin</param>
-        /// <param name="polarityNegativePin">GPIO pin wrapper for the negative polarity pin</param>
         public HBridgeWrapper( GpioPinWrapper pwmPin, GpioPinWrapper polarityPositivePin, GpioPinWrapper polarityNegativePin, string name)
         {
             Direction = 0;
