@@ -183,20 +183,7 @@ namespace GpioManagerObjects
             if (!Pins.ContainsKey(pinNumber))
                 return 0.0;
 
-            //if (PcaPins.ContainsKey(pinNumber))
-            //{
-            //    return PcaPins[pinNumber].Frequency;
-            //}
-            //else if (pinNumber == 12)
-            //{
-            //    //  program is hard coded to use 50 Hz on RPi PWM pin
-            //    return 50.0;
-            //}
-            //else
-            //{
-            //    //  software PWM
-            //    return 1.0 / (Pins[pinNumber].PwmRange * 0.000100);
-            //}
+            
 
             return 50;  //  TODO call the library
         }

@@ -231,8 +231,7 @@ namespace GpioJoy
                     }
                     else
                     {
-                        //  setup a new pin, hardware PWM on raspberry pi pin 12 - TODO JETSON make this number device aware for hardware PWM
-                        newPin = new GpioPinWrapperJs(pinNumber, displayName, pinNumber == 12);
+                        newPin = new GpioPinWrapperJs(pinNumber, displayName, GPIO.IsHardwarePwmPin(pinNumber) == 1);
                     }
 
                     //  initialize this pin in the pin manager
@@ -537,21 +536,7 @@ namespace GpioJoy
         /// </summary>
         public static int PwmRange(int pinNumber, bool isPca)
         {
-            switch (pinNumber)
-            {
-                case 12:
-                    //  raspberry pi, default range is 1024 on hardware PWM pin
-                    return 1024;
-
-                default:
-
-                    if (isPca)
-                        // PCA always has a range of 4096
-                        return 4096;
-                    else
-                        //  software PWM default range is 200 (for 50Hz)
-                        return 200;
-            }
+            return GPIO.PwmGetRange(pinNumber);
         }
 
 

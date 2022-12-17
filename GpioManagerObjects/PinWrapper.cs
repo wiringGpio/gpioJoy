@@ -25,8 +25,8 @@ namespace GpioManagerObjects
 
             //  init PWM parameters
             PwmRunning = false;
-            if (pinNumber == 12)
-                PwmRange = 1024;
+            if (hwPwm)
+                PwmRange = GPIO.PwmGetRange(pinNumber);
             else
                 PwmRange = 200;
 
@@ -73,7 +73,7 @@ namespace GpioManagerObjects
                 GPIO.DigitalWrite(PinNumber, (PinValue)value);
 
                 //  Raspberry Pi hardware PWM
-                if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                if (HardwarePwm && Mode == PinMode.PWMOutput)
                     GPIO.PwmWrite(PinNumber, 0);
             }
             else
@@ -167,7 +167,7 @@ namespace GpioManagerObjects
                     //  set pin to off
                     GPIO.DigitalWrite(PinNumber, 0);
 
-                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                    if (HardwarePwm && Mode == PinMode.PWMOutput)
                     {
                         //  set the clock to give 50 Hz for their range - TODO this is hard coded for 50 Hz (if this calculation is correct).  Need to understand more about PWM
                         //  http://raspberrypi.stackexchange.com/questions/4906/control-hardware-pwm-frequency
@@ -224,7 +224,7 @@ namespace GpioManagerObjects
                 if (HardwarePwm)
                 {
                     GPIO.DigitalWrite(PinNumber, 0);
-                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                    if (HardwarePwm && Mode == PinMode.PWMOutput)
                         GPIO.PwmWrite(PinNumber, 0);
                 }
                 else
@@ -256,7 +256,7 @@ namespace GpioManagerObjects
                 if (HardwarePwm)
                 {
                     GPIO.DigitalWrite(PinNumber, 0);
-                    if (PinNumber == 12 && Mode == PinMode.PWMOutput)
+                    if (HardwarePwm && Mode == PinMode.PWMOutput)
                         GPIO.PwmWrite(PinNumber, 0);
                 }
                 else
